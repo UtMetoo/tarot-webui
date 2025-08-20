@@ -687,6 +687,8 @@ class TarotApp {
      */
     async callTarotAPI(formData) {
         try {
+            console.log('发送API请求:', { ...formData, question: formData.question.substring(0, 50) + '...' });
+            
             const response = await fetch('/api/tarot', {
                 method: 'POST',
                 headers: {
@@ -695,8 +697,22 @@ class TarotApp {
                 body: JSON.stringify(formData)
             });
 
+            console.log('API响应状态:', response.status, response.statusText);
+
             if (!response.ok) {
-                throw new Error(`API请求失败: ${response.status} ${response.statusText}`);
+                let errorMessage = `API请求失败: ${response.status} ${response.statusText}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                    if (errorData.details) {
+                        console.error('错误详情:', errorData.details);
+                    }
+                } catch (e) {
+                    // 忽略JSON解析错误
+                }
+                throw new Error(errorMessage);
             }
 
             // 处理流式响应
@@ -716,6 +732,7 @@ class TarotApp {
         const decoder = new TextDecoder();
         let cardInfo = '';
         let analysisInfo = '';
+        let hasAnyData = false;
 
         // 显示结果区域
         this.showResult();
@@ -726,13 +743,24 @@ class TarotApp {
                 if (done) break;
 
                 const chunk = decoder.decode(value);
+                console.log('收到数据块:', chunk.substring(0, 100) + '...');
                 const lines = chunk.split('\n');
 
                 for (const line of lines) {
                     if (line.startsWith('data: ')) {
                         try {
                             const data = JSON.parse(line.slice(6));
+                            console.log('解析数据:', data);
+                            
                             if (data.content) {
+                                hasAnyData = true;
+                                
+                                // 检查是否有错误信息
+                                if (data.error) {
+                                    console.error('服务器返回错误:', data.error);
+                                    throw new Error(data.error);
+                                }
+                                
                                 // 根据节点标题判断内容类型
                                 if (data.node_title === '塔罗卡片展示') {
                                     cardInfo = data.content;
@@ -747,10 +775,14 @@ class TarotApp {
                                         analysisInfo = data.content;
                                         this.updateAnalysisInfo(analysisInfo);
                                     }
+                                } else if (!data.node_title) {
+                                    // 如果没有节点标题，直接作为分析内容处理
+                                    analysisInfo = data.content;
+                                    this.updateAnalysisInfo(analysisInfo);
                                 }
                             }
                         } catch (e) {
-                            // 忽略无效的JSON行
+                            console.log('跳过无效JSON行:', line, e);
                         }
                     }
                 }
@@ -760,8 +792,12 @@ class TarotApp {
             this.hideLoading();
         }
 
+        if (!hasAnyData) {
+            throw new Error('未收到任何有效数据，请检查API配置');
+        }
+        
         if (!cardInfo && !analysisInfo) {
-            throw new Error('未收到有效的占卜结果');
+            throw new Error('占卜结果格式异常，请稍后重试');
         }
     }
 

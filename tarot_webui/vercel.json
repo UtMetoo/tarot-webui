@@ -19,9 +19,5 @@
         "src": "/(.*)",
         "dest": "/public/$1"
       }
-    ],
-    "env": {
-      "COZE_API_KEY": "@coze-api-key",
-      "COZE_WORKFLOW_ID": "@coze-workflow-id"
-    }
+    ]
   }

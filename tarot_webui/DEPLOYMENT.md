@@ -13,7 +13,10 @@
    
    # 推送到GitHub
    git remote add origin https://github.com/your-username/tarot-webui.git
-   git push -u origin main
+   git push -u origin main --force
+
+   git config --global http.proxy http://proxy.server.com:port
+   git config --global https.proxy https://proxy.server.com:port
    ```
 
 2. **Vercel部署**
@@ -26,11 +29,17 @@
 3. **配置环境变量**
    - 在Vercel项目设置中找到"Environment Variables"
    - 添加以下变量：
-     - `COZE_API_KEY`: 你的Coze API密钥
-     - `COZE_WORKFLOW_ID`: 你的工作流ID
+     - **Name**: `COZE_API_KEY`
+     - **Value**: 你的Coze API密钥（通常以 `sk-` 开头）
+     - **Environment**: Production, Preview, Development
+     
+     - **Name**: `COZE_WORKFLOW_ID`
+     - **Value**: 你的工作流ID
+     - **Environment**: Production, Preview, Development
 
 4. **重新部署**
    - 配置环境变量后，点击"Redeploy"
+   - 或者推送代码到GitHub触发自动部署
 
 ### 方法二：Vercel CLI部署
 
@@ -60,7 +69,7 @@
 4. **设置环境变量**
    ```bash
    vercel env add COZE_API_KEY
-   # 输入你的API密钥
+   # 输入你的API密钥（通常以 sk- 开头）
    
    vercel env add COZE_WORKFLOW_ID
    # 输入你的工作流ID
@@ -71,34 +80,6 @@
    vercel --prod
    ```
 
-## 本地开发环境
-
-### 环境要求
-- Node.js 18+
-- npm 或 yarn
-
-### 安装步骤
-
-1. **安装依赖**
-   ```bash
-   npm install
-   ```
-
-2. **创建环境变量文件**
-   ```bash
-   # 创建 .env.local 文件
-   echo "COZE_API_KEY=你的API密钥" > .env.local
-   echo "COZE_WORKFLOW_ID=你的工作流ID" >> .env.local
-   ```
-
-3. **启动开发服务器**
-   ```bash
-   vercel dev
-   ```
-
-4. **访问应用**
-   打开浏览器访问 `http://localhost:3000`
-
 ## 配置检查清单
 
 部署前请确保：
@@ -108,6 +89,26 @@
 - [ ] 环境变量已正确配置
 - [ ] 项目文件结构完整
 - [ ] vercel.json配置正确
+
+### 环境变量验证
+
+部署后，访问以下URL验证环境变量是否正确设置：
+
+```
+https://your-domain.vercel.app/api/debug
+```
+
+如果看到以下响应，说明配置正确：
+
+```json
+{
+  "hasApiKey": true,
+  "hasWorkflowId": true,
+  "workflowId": "your-workflow-id"
+}
+```
+
+如果 `hasApiKey` 或 `hasWorkflowId` 为 `false`，请检查环境变量设置。
 
 ## 常见问题
 
