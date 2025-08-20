@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>塔罗牌占卜 - 探索命运的奥秘</title>
+    <meta name="description" content="基于AI的塔罗牌占卜应用，为您提供专业的塔罗牌解读服务">
+    <meta name="keywords" content="塔罗牌,占卜,AI,命运,解读">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部标题 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <circle cx="30" cy="30" r="28" fill="url(#gradient)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <path d="M30 15 L35 25 L45 25 L37 32 L40 42 L30 35 L20 42 L23 32 L15 25 L25 25 Z" fill="white"/>
+                        <defs>
+                            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#667eea;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>塔罗牌占卜</h1>
+                <p>基于AI的神秘智慧，探索命运的奥秘</p>
+            </div>
+        </header>
+
+        <!-- 主要区域：左右两栏布局 -->
+        <main class="main-content">
+            <div class="content-layout">
+                <!-- 左侧：用户信息表单 -->
+                <div class="left-pane">
+                    <form id="tarotForm" class="tarot-form">
+                        <!-- 个人信息区域 -->
+                        <div class="form-section">
+                            <h2>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="8" r="5" fill="currentColor"/>
+                                    <path d="M20 21C20 16.5817 16.4183 13 12 13C7.58172 13 4 16.5817 4 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                个人信息
+                            </h2>
+                            <!-- 生日选择 -->
+                            <div class="form-group">
+                                <label for="birthday">出生日期 <span class="required">*</span></label>
+                                <div class="date-time-inputs">
+                                    <input type="date" id="birthday" name="birthday" required>
+                                    <input type="time" id="birthtime" name="birthtime" value="12:00">
+                                </div>
+                                <small>请选择您的出生日期和时间</small>
+                            </div>
+                            <!-- 性别选择 -->
+                            <div class="form-group form-inline">
+                                <label for="genderSelect">性别 <span class="required">*</span></label>
+                                <select id="genderSelect" name="gender" required>
+                                    <option value="">请选择</option>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                            </div>
+                            <!-- 城市选择 -->
+                            <div class="form-group form-inline">
+                                <label for="city">出生城市 <span class="required">*</span></label>
+                                <div class="city-selector">
+                                    <input type="text" id="citySearch" placeholder="搜索城市..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="cityDropdown" aria-expanded="false" aria-haspopup="listbox">
+                                    <div class="city-dropdown" id="cityDropdown" role="listbox"></div>
+                                </div>
+                                <small>请选择您的出生城市</small>
+                            </div>
+                        </div>
+                        <!-- 占卜问题区域 -->
+                        <div class="form-section">
+                            <h2>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40921C11.0108 7.0503 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6714 8.60553 14.9211 9.30197 14.92 10C14.92 11.5 13.5 13 12 13C10.5 13 9.08 11.5 9.08 10C9.08 9.5 9.09 9 9.09 9Z" fill="currentColor"/>
+                                    <path d="M12 17V17.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                占卜问题
+                            </h2>
+                            <div class="form-group">
+                                <label for="question">您想占卜的问题 <span class="required">*</span></label>
+                                <textarea id="question" name="question" placeholder="请详细描述您想要占卜的问题..." required rows="4"></textarea>
+                                <small>问题越具体，解读越准确</small>
+                            </div>
+                        </div>
+                        <!-- 提交按钮 -->
+                        <div class="form-actions">
+                            <button type="submit" id="submitBtn" class="submit-btn">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <span>开始占卜</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 右侧：卡片信息与解析信息 -->
+                <div class="right-pane">
+                    <!-- 加载状态 -->
+                    <div id="loadingState" class="loading-state hidden" role="status" aria-live="polite" aria-busy="false">
+                        <div class="loading-spinner">
+                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="30" cy="30" r="25" stroke="#f3f3f3" stroke-width="4"/>
+                                <circle cx="30" cy="30" r="25" stroke="#667eea" stroke-width="4" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157">
+                                    <animate attributeName="stroke-dasharray" values="0 157;78.5 78.5;0 157" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                            </svg>
+                        </div>
+                        <p>正在为您解读塔罗牌...</p>
+                        <p class="loading-tip">请耐心等待，神秘的力量正在运转</p>
+                    </div>
+
+                    <!-- 卡片信息区域 -->
+                    <div class="result-section">
+                        <h3 class="section-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <path d="M9 9H15V15H9V9Z" fill="currentColor"/>
+                            </svg>
+                            塔罗卡片信息
+                        </h3>
+                        <div id="cardArea" class="card-area" role="region" aria-label="塔罗牌卡面显示区域">
+                            <div class="card-placeholder">完成抽牌后，这里显示卡面信息</div>
+                        </div>
+                    </div>
+
+                    <!-- 解析信息区域 -->
+                    <div class="result-section">
+                        <h3 class="section-title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            塔罗牌解读
+                        </h3>
+                        <div id="resultArea" class="result-area hidden" role="region" aria-live="polite" aria-label="塔罗牌解读结果"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+            <!-- 页脚 -->
+            <footer class="footer">
+                <p>&copy; 2025 塔罗牌占卜. 基于AI的神秘智慧</p>
+            </footer>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+    </html>

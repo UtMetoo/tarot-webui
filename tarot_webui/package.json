@@ -1,0 +1,23 @@
+{
+    "name": "tarot-webui",
+    "version": "1.0.0",
+    "description": "基于AI的塔罗牌占卜前端应用",
+    "main": "index.js",
+    "scripts": {
+      "dev": "vercel dev",
+      "build": "echo 'No build step required'",
+      "start": "vercel dev"
+    },
+    "keywords": [
+      "tarot",
+      "divination",
+      "ai",
+      "coze",
+      "vercel"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "devDependencies": {
+      "vercel": "^32.0.0"
+    }
+  }
