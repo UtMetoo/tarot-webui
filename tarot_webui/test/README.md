@@ -33,10 +33,24 @@
 
 **访问方式**: `https://your-domain.vercel.app/test/image-test.html`
 
+### 4. markdown-test.html - Markdown渲染测试
+**用途**: 测试塔罗牌解读中的Markdown格式渲染
+**功能**:
+- 基本Markdown格式测试（标题、粗体、斜体）
+- 列表渲染测试（有序列表、无序列表）
+- 链接和代码块测试
+- 复杂格式组合测试
+- 实时渲染预览
+
+**访问方式**: `https://your-domain.vercel.app/test/markdown-test.html`
+
 ## 使用建议
 
 1. **部署后验证**: 部署完成后首先访问 `test.html` 验证基本功能
-2. **功能测试**: 使用 `card-test.html` 和 `image-test.html` 测试具体功能
+2. **功能测试**: 使用各个测试页面验证具体功能
+   - `card-test.html` - 验证卡片显示功能
+   - `image-test.html` - 验证图片加载处理
+   - `markdown-test.html` - 验证Markdown解读渲染
 3. **问题诊断**: 遇到问题时使用相应的测试页面进行诊断
 
 ## 注意事项

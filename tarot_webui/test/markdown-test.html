@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown渲染测试 - 塔罗牌占卜</title>
+    <link rel="stylesheet" href="../public/styles.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafbfc;
+        }
+        
+        .test-title {
+            color: var(--brand-color);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .raw-markdown {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--brand-color);
+        }
+        
+        .rendered-result {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecf2;
+        }
+        
+        .test-button {
+            background: var(--brand-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Markdown渲染测试页面</h1>
+        <p>此页面用于测试塔罗牌解读中的Markdown格式渲染功能。</p>
+        
+        <div class="test-section">
+            <div class="test-title">测试1：基本格式</div>
+            <div class="raw-markdown" id="test1-raw"># 塔罗牌解读
+
+## 卡片分析
+
+### 星币七 - 正位
+
+这张卡片表示 **耐心** 和 *坚持*。你正在为未来的收获而努力工作。
+
+- 关键词：耐心、投资、长期规划
+- 建议：继续坚持你的努力
+- 注意：不要急于求成
+
+### 宝剑三 - 逆位
+
+代表着情感上的 **治愈** 和 *释放*。
+
+1. 学会原谅自己
+2. 放下过去的痛苦
+3. 寻求内心的平静
+
+## 总结
+
+通过这次占卜，我们可以看到你正处在一个 `转变` 的关键时期。
+
+[了解更多](https://example.com) 关于塔罗牌的含义。</div>
+            <div class="rendered-result" id="test1-result"></div>
+            <button class="test-button" onclick="testMarkdown('test1')">渲染测试1</button>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">测试2：复杂列表</div>
+            <div class="raw-markdown" id="test2-raw">## 三张卡片的详细解读
+
+### 1. 过去 - 星币七
+
+**正位含义：**
+- 投资和储蓄
+- 长期规划的智慧
+- 对未来的信心
+
+**在你的情况下：**
+你在过去做出了明智的选择，这些选择现在开始显现出价值。
+
+### 2. 现在 - 宝剑三
+
+**逆位含义：**
+- 情感治愈
+- 走出阴霾
+- 内心的成长
+
+**当前状态：**
+你正在经历一个治愈的过程，虽然仍有挑战，但你已经开始看到希望的曙光。
+
+### 3. 未来 - 塔
+
+**正位含义：**
+- 突然的变化
+- 旧结构的崩塌
+- 新开始的机会
+
+**未来展望：**
+即将到来的变化虽然可能令人不安，但它们将为你带来全新的机遇和成长。
+
+## 综合建议
+
+1. **保持耐心** - 你的努力将会得到回报
+2. **拥抱变化** - 不要害怕即将到来的转变
+3. **相信自己** - 你有能力应对任何挑战
+
+记住：*每一次结束都是新开始的起点*。</div>
+            <div class="rendered-result" id="test2-result"></div>
+            <button class="test-button" onclick="testMarkdown('test2')">渲染测试2</button>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">测试3：简单文本</div>
+            <div class="raw-markdown" id="test3-raw">根据你提供的信息和抽到的三张塔罗牌，我为你进行以下解读：
+
+你正处在人生的一个重要转折点。过去的努力和投资开始显现成果，但同时你也需要面对一些情感上的挑战。
+
+未来会有重大的变化等待着你，虽然这些变化可能带来不确定性，但它们也是成长和新机遇的象征。
+
+保持开放的心态，相信自己的直觉，你将能够成功度过这个转变期。</div>
+            <div class="rendered-result" id="test3-result"></div>
+            <button class="test-button" onclick="testMarkdown('test3')">渲染测试3</button>
+        </div>
+        
+        <button class="test-button" onclick="testAllMarkdown()">渲染所有测试</button>
+    </div>
+
+    <script src="../public/script.js"></script>
+    <script>
+        // 创建一个临时的TarotApp实例来测试Markdown渲染
+        const testApp = new TarotApp();
+        
+        function testMarkdown(testId) {
+            const rawElement = document.getElementById(`${testId}-raw`);
+            const resultElement = document.getElementById(`${testId}-result`);
+            
+            if (rawElement && resultElement) {
+                const rawText = rawElement.textContent;
+                const renderedHtml = testApp.renderMarkdown(rawText);
+                resultElement.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
+            }
+        }
+        
+        function testAllMarkdown() {
+            testMarkdown('test1');
+            testMarkdown('test2');
+            testMarkdown('test3');
+        }
+        
+        // 页面加载时自动渲染所有测试
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testAllMarkdown, 500);
+        });
+    </script>
+</body>
+</html>

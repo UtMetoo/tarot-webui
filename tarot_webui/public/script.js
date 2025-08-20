@@ -869,7 +869,7 @@ class TarotApp {
                 const cards = JSON.parse(content);
                 console.log('解析的卡片数据:', cards);
                 
-                if (Array.isArray(cards) && cards.length > 0) {
+                                if (Array.isArray(cards) && cards.length > 0) {
                     const cardsHTML = cards.map(card => `
                         <div class="card-item">
                             <div class="card-image">
@@ -878,7 +878,7 @@ class TarotApp {
                                         <circle cx="12" cy="12" r="10" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
                                             <animate attributeName="stroke-dasharray" values="0 31.416;15.708 15.708;0 31.416" dur="1.5s" repeatCount="indefinite"/>
                                         </svg>
-                                </div>
+                                    </div>
                                 <img src="${card.url}" alt="${card.name_cn}" 
                                      onload="this.parentElement.classList.add('loaded')" 
                                      onerror="this.parentElement.classList.add('error')">
@@ -894,7 +894,7 @@ class TarotApp {
                             <div class="card-info">
                                 <h4>${card.name_cn}</h4>
                                 <p class="card-name-en">${card.name_en}</p>
-                                <p class="card-position">位置 ${card.position} - ${card.type}</p>
+                                <p class="card-type">${card.type}</p>
                             </div>
                         </div>
                     `).join('');
@@ -930,15 +930,166 @@ class TarotApp {
     updateAnalysisInfo(content) {
         const resultArea = document.getElementById('resultArea');
         if (resultArea) {
-            // 将换行符转换为HTML换行
-            const formattedContent = content.replace(/\n/g, '<br>');
+            console.log('开始更新解析信息:', content);
+            
+            // 渲染Markdown格式的内容
+            const formattedContent = this.renderMarkdown(content);
             resultArea.innerHTML = `
                 <div class="tarot-result">
-                    <div class="result-content">${formattedContent}</div>
+                    <div class="result-content markdown-content">${formattedContent}</div>
                 </div>
             `;
             this.showElement('resultArea');
         }
+    }
+
+    /**
+     * 简单的Markdown渲染器
+     * 支持标题、粗体、斜体、列表、链接等基本格式
+     */
+    renderMarkdown(markdown) {
+        if (!markdown || typeof markdown !== 'string') {
+            return '';
+        }
+
+        let html = markdown;
+
+        // 先处理代码块，避免其他格式化影响代码内容
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+        // 处理标题 (### ## #)
+        html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+        html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+        html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+
+        // 处理粗体 **text** (避免与斜体冲突)
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+        // 处理斜体 *text* (使用更简单的方法)
+        // 先标记已处理的强调文本，避免重复处理
+        html = html.replace(/<strong>(.*?)<\/strong>/g, '[[STRONG]]$1[[/STRONG]]');
+        html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        html = html.replace(/\[\[STRONG\]\](.*?)\[\[\/STRONG\]\]/g, '<strong>$1</strong>');
+
+        // 处理链接 [text](url)
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+        // 处理无序列表 - item
+        const lines = html.split('\n');
+        let inList = false;
+        let processedLines = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const isListItem = /^- (.*)$/.test(line);
+            
+            if (isListItem && !inList) {
+                // 开始新列表
+                processedLines.push('<ul>');
+                processedLines.push(`<li>${line.replace(/^- /, '')}</li>`);
+                inList = true;
+            } else if (isListItem && inList) {
+                // 继续列表项
+                processedLines.push(`<li>${line.replace(/^- /, '')}</li>`);
+            } else if (!isListItem && inList) {
+                // 结束列表
+                processedLines.push('</ul>');
+                processedLines.push(line);
+                inList = false;
+            } else {
+                // 普通行
+                processedLines.push(line);
+            }
+        }
+        
+        // 如果最后还在列表中，关闭列表
+        if (inList) {
+            processedLines.push('</ul>');
+        }
+
+        html = processedLines.join('\n');
+
+        // 处理有序列表 1. item
+        const numberedLines = html.split('\n');
+        let inOrderedList = false;
+        let orderedProcessedLines = [];
+        
+        for (let i = 0; i < numberedLines.length; i++) {
+            const line = numberedLines[i];
+            const isOrderedItem = /^\d+\. (.*)$/.test(line);
+            
+            if (isOrderedItem && !inOrderedList) {
+                // 开始新有序列表
+                orderedProcessedLines.push('<ol>');
+                orderedProcessedLines.push(`<li>${line.replace(/^\d+\. /, '')}</li>`);
+                inOrderedList = true;
+            } else if (isOrderedItem && inOrderedList) {
+                // 继续有序列表项
+                orderedProcessedLines.push(`<li>${line.replace(/^\d+\. /, '')}</li>`);
+            } else if (!isOrderedItem && inOrderedList) {
+                // 结束有序列表
+                orderedProcessedLines.push('</ol>');
+                orderedProcessedLines.push(line);
+                inOrderedList = false;
+            } else {
+                // 普通行
+                orderedProcessedLines.push(line);
+            }
+        }
+        
+        // 如果最后还在有序列表中，关闭列表
+        if (inOrderedList) {
+            orderedProcessedLines.push('</ol>');
+        }
+
+        html = orderedProcessedLines.join('\n');
+
+        // 处理段落（将连续的非空行包装在<p>标签中）
+        const paragraphLines = html.split('\n');
+        let paragraphProcessedLines = [];
+        let inParagraph = false;
+        
+        for (let i = 0; i < paragraphLines.length; i++) {
+            const line = paragraphLines[i].trim();
+            const isSpecialElement = /^<(h[1-6]|ul|ol|li|\/ul|\/ol)/.test(line);
+            
+            if (line === '') {
+                if (inParagraph) {
+                    paragraphProcessedLines.push('</p>');
+                    inParagraph = false;
+                }
+                paragraphProcessedLines.push('');
+            } else if (isSpecialElement) {
+                if (inParagraph) {
+                    paragraphProcessedLines.push('</p>');
+                    inParagraph = false;
+                }
+                paragraphProcessedLines.push(line);
+            } else {
+                if (!inParagraph) {
+                    paragraphProcessedLines.push('<p>');
+                    inParagraph = true;
+                }
+                paragraphProcessedLines.push(line);
+            }
+        }
+        
+        if (inParagraph) {
+            paragraphProcessedLines.push('</p>');
+        }
+
+        html = paragraphProcessedLines.join('\n');
+
+        // 处理换行符（在段落处理之后）
+        html = html.replace(/\n/g, '<br>');
+
+        // 清理多余的br标签
+        html = html.replace(/<br>\s*<\/([h1-6|p|ul|ol|li])>/g, '</$1>');
+        html = html.replace(/<([h1-6|p|ul|ol|li])([^>]*)><br>/g, '<$1$2>');
+        html = html.replace(/<p><br>/g, '<p>');
+        html = html.replace(/<br><\/p>/g, '</p>');
+
+        return html;
     }
 
     /**
@@ -1015,6 +1166,85 @@ const additionalStyles = `
     white-space: pre-wrap;
 }
 
+/* Markdown内容样式 */
+.markdown-content {
+    white-space: normal;
+}
+
+.markdown-content h1 {
+    font-size: 1.8rem;
+    color: var(--brand-color);
+    margin: 24px 0 16px 0;
+    border-bottom: 2px solid var(--brand-color);
+    padding-bottom: 8px;
+}
+
+.markdown-content h2 {
+    font-size: 1.5rem;
+    color: var(--brand-color);
+    margin: 20px 0 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 6px;
+}
+
+.markdown-content h3 {
+    font-size: 1.3rem;
+    color: #2b2f36;
+    margin: 16px 0 10px 0;
+    font-weight: 600;
+}
+
+.markdown-content strong {
+    color: var(--brand-color);
+    font-weight: 600;
+}
+
+.markdown-content em {
+    color: #666;
+    font-style: italic;
+}
+
+.markdown-content ul {
+    margin: 12px 0;
+    padding-left: 24px;
+    list-style-type: disc;
+}
+
+.markdown-content ol {
+    margin: 12px 0;
+    padding-left: 24px;
+    list-style-type: decimal;
+}
+
+.markdown-content li {
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.markdown-content a {
+    color: var(--brand-color);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.markdown-content a:hover {
+    border-bottom-color: var(--brand-color);
+}
+
+.markdown-content code {
+    background: #f5f7fa;
+    color: #e74c3c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+}
+
+.markdown-content p {
+    margin: 12px 0;
+}
+
 .error-message {
     text-align: center;
     padding: 30px;
@@ -1049,19 +1279,23 @@ const additionalStyles = `
 /* 卡片显示样式 */
 .cards-container {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 0 16px;
 }
 
 .card-item {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16px;
     padding: 16px;
     border: 1px solid var(--border-color);
     border-radius: 12px;
     background: #fafbfc;
     transition: all 0.3s ease;
+    flex: 0 0 auto;
+    max-width: 240px;
 }
 
 .card-item:hover {
@@ -1070,9 +1304,8 @@ const additionalStyles = `
 }
 
 .card-image {
-    flex-shrink: 0;
-    width: 80px;
-    height: 120px;
+    width: 200px;
+    height: 340px;
     border-radius: 8px;
     overflow: hidden;
     background: #f8f9fa;
@@ -1081,6 +1314,7 @@ const additionalStyles = `
     justify-content: center;
     position: relative;
     border: 1px solid #e9ecf2;
+    margin-bottom: 12px;
 }
 
 .card-image img {
@@ -1133,28 +1367,33 @@ const additionalStyles = `
 }
 
 .card-info {
-    flex: 1;
+    text-align: center;
+    width: 100%;
 }
 
 .card-info h4 {
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
     font-size: 16px;
     font-weight: 600;
     color: #2b2f36;
 }
 
 .card-name-en {
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
     font-size: 12px;
     color: #6b7280;
     font-style: italic;
 }
 
-.card-position {
+.card-type {
     margin: 0;
     font-size: 14px;
     color: var(--brand-color);
     font-weight: 500;
+    padding: 4px 8px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+    display: inline-block;
 }
 
 .card-content {
@@ -1172,28 +1411,54 @@ const additionalStyles = `
         font-size: 1.3rem;
     }
     
-    .card-item {
+    .cards-container {
         flex-direction: column;
-        text-align: center;
-        gap: 12px;
+        align-items: center;
+        gap: 16px;
+    }
+    
+    .card-item {
+        max-width: 200px;
         padding: 12px;
     }
     
     .card-image {
-        width: 100px;
-        height: 140px;
+        width: 150px;
+        height: 255px;
+        margin-bottom: 10px;
     }
     
     .card-info h4 {
-        font-size: 18px;
+        font-size: 16px;
     }
     
     .card-name-en {
-        font-size: 14px;
+        font-size: 11px;
     }
     
-    .card-position {
-        font-size: 16px;
+    .card-type {
+        font-size: 13px;
+        padding: 3px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cards-container {
+        gap: 12px;
+    }
+    
+    .card-item {
+        max-width: 180px;
+        padding: 10px;
+    }
+    
+    .card-image {
+        width: 120px;
+        height: 204px;
+    }
+    
+    .card-info h4 {
+        font-size: 15px;
     }
 }
 </style>

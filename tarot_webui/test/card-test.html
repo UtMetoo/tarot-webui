@@ -80,7 +80,7 @@
                     <div class="card-info">
                         <h4>${card.name_cn}</h4>
                         <p class="card-name-en">${card.name_en}</p>
-                        <p class="card-position">位置 ${card.position} - ${card.type}</p>
+                        <p class="card-type">${card.type}</p>
                     </div>
                 </div>
             `).join('');
@@ -112,7 +112,7 @@
                         <div class="card-info">
                             <h4>${card.name_cn}</h4>
                             <p class="card-name-en">${card.name_en}</p>
-                            <p class="card-position">位置 ${card.position} - ${card.type}</p>
+                            <p class="card-type">${card.type}</p>
                         </div>
                     </div>
                 `).join('');
@@ -140,30 +140,42 @@
         <style>
         .cards-container {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            padding: 0 16px;
         }
 
         .card-item {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 12px;
-            padding: 12px;
+            padding: 16px;
             border: 1px solid #e9ecf2;
-            border-radius: 8px;
+            border-radius: 12px;
             background: #fafbfc;
+            transition: all 0.3s ease;
+            flex: 0 0 auto;
+            max-width: 240px;
+        }
+
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
         }
 
         .card-image {
-            flex-shrink: 0;
-            width: 60px;
-            height: 80px;
-            border-radius: 6px;
+            width: 200px;
+            height: 340px;
+            border-radius: 8px;
             overflow: hidden;
-            background: #f0f0f0;
+            background: #f8f9fa;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            border: 1px solid #e9ecf2;
+            margin-bottom: 12px;
         }
 
         .card-image img {
@@ -173,39 +185,63 @@
         }
 
         .card-info {
-            flex: 1;
+            text-align: center;
+            width: 100%;
         }
 
         .card-info h4 {
-            margin: 0 0 4px 0;
+            margin: 0 0 6px 0;
             font-size: 16px;
             font-weight: 600;
             color: #2b2f36;
         }
 
         .card-name-en {
-            margin: 0 0 4px 0;
+            margin: 0 0 6px 0;
             font-size: 12px;
             color: #6b7280;
             font-style: italic;
         }
 
-        .card-position {
+        .card-type {
             margin: 0;
             font-size: 14px;
             color: #667eea;
             font-weight: 500;
+            padding: 4px 8px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            display: inline-block;
         }
 
         @media (max-width: 768px) {
-            .card-item {
+            .cards-container {
                 flex-direction: column;
-                text-align: center;
+                align-items: center;
+                gap: 16px;
+            }
+            
+            .card-item {
+                max-width: 200px;
+                padding: 12px;
             }
             
             .card-image {
-                width: 80px;
-                height: 100px;
+                width: 150px;
+                height: 255px;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-item {
+                max-width: 180px;
+                padding: 10px;
+            }
+            
+            .card-image {
+                width: 120px;
+                height: 204px;
             }
         }
         </style>

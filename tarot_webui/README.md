@@ -59,7 +59,9 @@ tarot_webui/
 ├── test/                  # 测试页面目录
 │   ├── test.html         # 部署测试页面
 │   ├── card-test.html    # 卡片显示测试
-│   └── image-test.html   # 图片加载测试
+│   ├── image-test.html   # 图片加载测试
+│   ├── markdown-test.html # Markdown渲染测试
+│   └── README.md         # 测试页面说明文档
 ├── package.json           # 项目依赖配置
 ├── vercel.json            # Vercel部署配置
 ├── .gitignore             # Git忽略文件
@@ -133,6 +135,7 @@ vercel --prod
 - **部署测试** (`/test/test.html`): 验证部署状态和API连接
 - **卡片显示测试** (`/test/card-test.html`): 测试卡片信息显示功能
 - **图片加载测试** (`/test/image-test.html`): 测试图片加载和错误处理
+- **Markdown渲染测试** (`/test/markdown-test.html`): 测试塔罗牌解读的Markdown格式渲染
 
 访问这些测试页面可以快速诊断部署和功能问题。
 
@@ -216,6 +219,7 @@ curl -X POST 'https://your-app.vercel.app/api/tarot' \
 1. **部署状态测试**: 访问 `/test/test.html` 检查部署和环境变量
 2. **卡片显示测试**: 访问 `/test/card-test.html` 验证卡片渲染功能
 3. **图片加载测试**: 访问 `/test/image-test.html` 测试图片加载和错误处理
+4. **Markdown渲染测试**: 访问 `/test/markdown-test.html` 验证解读内容的Markdown格式渲染
 
 这些测试页面提供了详细的调试信息和状态反馈。
 
