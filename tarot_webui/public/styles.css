@@ -125,6 +125,12 @@ body {
     justify-content: center;
 }
 
+.card-area:not(:empty) {
+    display: block;
+    align-items: stretch;
+    justify-content: flex-start;
+}
+
 .card-placeholder {
     color: #9aa0b4;
     font-size: 14px;

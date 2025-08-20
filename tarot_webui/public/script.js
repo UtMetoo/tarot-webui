@@ -764,6 +764,7 @@ class TarotApp {
                                 // 根据节点标题判断内容类型
                                 if (data.node_title === '塔罗卡片展示') {
                                     cardInfo = data.content;
+                                    console.log('收到卡片信息:', cardInfo);
                                     this.updateCardInfo(cardInfo);
                                 } else if (data.node_title === 'End') {
                                     // 解析End节点的JSON内容
@@ -837,6 +838,8 @@ class TarotApp {
      */
     showResult() {
         this.showElement('resultArea');
+        // 确保卡片区域也可见
+        this.showElement('cardArea');
     }
 
     /**
@@ -845,10 +848,14 @@ class TarotApp {
     updateCardInfo(content) {
         const cardArea = document.getElementById('cardArea');
         if (cardArea) {
+            console.log('开始更新卡片信息:', content);
+            
             try {
                 // 尝试解析JSON格式的卡片信息
                 const cards = JSON.parse(content);
-                if (Array.isArray(cards)) {
+                console.log('解析的卡片数据:', cards);
+                
+                if (Array.isArray(cards) && cards.length > 0) {
                     const cardsHTML = cards.map(card => `
                         <div class="card-item">
                             <div class="card-image">
@@ -862,18 +869,28 @@ class TarotApp {
                         </div>
                     `).join('');
                     
+                    console.log('生成的HTML:', cardsHTML);
+                    
                     cardArea.innerHTML = `
                         <div class="cards-container">
                             ${cardsHTML}
                         </div>
                     `;
+                    
+                    // 显示卡片区域
+                    this.showElement('cardArea');
+                    console.log('卡片信息更新完成');
                 } else {
+                    console.log('卡片数据不是数组或为空');
                     cardArea.innerHTML = `<div class="card-content">${content}</div>`;
                 }
             } catch (e) {
+                console.log('卡片信息解析失败:', e);
                 // 如果不是JSON格式，直接显示内容
                 cardArea.innerHTML = `<div class="card-content">${content}</div>`;
             }
+        } else {
+            console.error('找不到cardArea元素');
         }
     }
 

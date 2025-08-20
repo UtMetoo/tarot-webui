@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡片显示测试</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>卡片显示测试</h1>
+        
+        <button class="test-button" onclick="testCardDisplay()">测试卡片显示</button>
+        <button class="test-button" onclick="testAPIResponse()">测试API响应</button>
+        <button class="test-button" onclick="clearCards()">清除卡片</button>
+        
+        <div class="result-section">
+            <h3 class="section-title">塔罗卡片信息</h3>
+            <div id="cardArea" class="card-area">
+                <div class="card-placeholder">点击测试按钮显示卡片</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟卡片数据
+        const testCards = [
+            {
+                "name_cn": "星币七",
+                "name_en": "Seven of Pentacles",
+                "position": 1,
+                "type": "正位",
+                "url": "https://t.8s8s.com/photo/tarotphoto/72/seven-pentacles.jpg"
+            },
+            {
+                "name_cn": "宝剑三",
+                "name_en": "Three of Swords",
+                "position": 2,
+                "type": "逆位",
+                "url": "https://t.8s8s.com/photo/tarotphoto/72/three-swords.jpg"
+            },
+            {
+                "name_cn": "塔",
+                "name_en": "The Tower",
+                "position": 3,
+                "type": "正位",
+                "url": "https://t.8s8s.com/photo/tarotphoto/72/tower.jpg"
+            }
+        ];
+
+        function testCardDisplay() {
+            const cardArea = document.getElementById('cardArea');
+            
+            const cardsHTML = testCards.map(card => `
+                <div class="card-item">
+                    <div class="card-image">
+                        <img src="${card.url}" alt="${card.name_cn}" onerror="this.style.display='none'">
+                    </div>
+                    <div class="card-info">
+                        <h4>${card.name_cn}</h4>
+                        <p class="card-name-en">${card.name_en}</p>
+                        <p class="card-position">位置 ${card.position} - ${card.type}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            cardArea.innerHTML = `
+                <div class="cards-container">
+                    ${cardsHTML}
+                </div>
+            `;
+        }
+
+        function testAPIResponse() {
+            const cardArea = document.getElementById('cardArea');
+            
+            // 模拟API返回的JSON字符串
+            const apiResponse = '[{"name_cn":"星币七","name_en":"Seven of Pentacles","position":1,"type":"正位","url":"https://t.8s8s.com/photo/tarotphoto/72/seven-pentacles.jpg"},{"name_cn":"宝剑三","name_en":"Three of Swords","position":2,"type":"逆位","url":"https://t.8s8s.com/photo/tarotphoto/72/three-swords.jpg"},{"name_cn":"塔","name_en":"The Tower","position":3,"type":"正位","url":"https://t.8s8s.com/photo/tarotphoto/72/tower.jpg"}]';
+            
+            console.log('模拟API响应:', apiResponse);
+            
+            try {
+                const cards = JSON.parse(apiResponse);
+                console.log('解析的卡片数据:', cards);
+                
+                const cardsHTML = cards.map(card => `
+                    <div class="card-item">
+                        <div class="card-image">
+                            <img src="${card.url}" alt="${card.name_cn}" onerror="this.style.display='none'">
+                        </div>
+                        <div class="card-info">
+                            <h4>${card.name_cn}</h4>
+                            <p class="card-name-en">${card.name_en}</p>
+                            <p class="card-position">位置 ${card.position} - ${card.type}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                cardArea.innerHTML = `
+                    <div class="cards-container">
+                        ${cardsHTML}
+                    </div>
+                `;
+                
+                console.log('卡片显示完成');
+            } catch (e) {
+                console.error('解析失败:', e);
+                cardArea.innerHTML = '<div class="error">解析失败: ' + e.message + '</div>';
+            }
+        }
+
+        function clearCards() {
+            const cardArea = document.getElementById('cardArea');
+            cardArea.innerHTML = '<div class="card-placeholder">点击测试按钮显示卡片</div>';
+        }
+
+        // 添加卡片样式
+        const cardStyles = `
+        <style>
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid #e9ecf2;
+            border-radius: 8px;
+            background: #fafbfc;
+        }
+
+        .card-image {
+            flex-shrink: 0;
+            width: 60px;
+            height: 80px;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2b2f36;
+        }
+
+        .card-name-en {
+            margin: 0 0 4px 0;
+            font-size: 12px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .card-position {
+            margin: 0;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .card-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .card-image {
+                width: 80px;
+                height: 100px;
+            }
+        }
+        </style>
+        `;
+
+        document.head.insertAdjacentHTML('beforeend', cardStyles);
+    </script>
+</body>
+</html>
