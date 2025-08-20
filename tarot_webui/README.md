@@ -47,6 +47,7 @@ tarot_webui/
 │   └── script.js          # 前端逻辑
 ├── api/                   # Vercel Serverless Functions
 │   ├── tarot.js          # 塔罗牌API路由处理
+│   ├── debug.js          # 调试API端点
 │   ├── auth/             # 用户认证相关API
 │   │   ├── register.js   # 用户注册
 │   │   ├── login.js      # 用户登录
@@ -55,48 +56,20 @@ tarot_webui/
 │   └── _utils/           # 工具函数
 │       ├── feishu.js     # 飞书多维表格集成
 │       └── cookies.js    # 会话Cookie管理
+├── test/                  # 测试页面目录
+│   ├── test.html         # 部署测试页面
+│   ├── card-test.html    # 卡片显示测试
+│   └── image-test.html   # 图片加载测试
 ├── package.json           # 项目依赖配置
 ├── vercel.json            # Vercel部署配置
 ├── .gitignore             # Git忽略文件
+├── DEPLOYMENT.md          # 部署指南
+├── ENV_SETUP.md           # 环境变量设置指南
+├── TROUBLESHOOTING.md     # 故障排除指南
 └── README.md              # 项目说明文档
 ```
 
-## 本地开发
 
-### 1. 环境准备
-
-```bash
-# 安装Node.js (推荐v18+)
-# 安装Vercel CLI
-npm install -g vercel
-```
-
-### 2. 项目设置
-
-```bash
-# 克隆项目
-git clone <repository-url>
-cd tarot_webui
-
-# 安装依赖
-npm install
-
-# 设置环境变量
-# 创建 .env.local 文件
-echo "COZE_API_KEY=你的API密钥" > .env.local
-echo "COZE_WORKFLOW_ID=你的工作流ID" >> .env.local
-```
-
-### 3. 本地运行
-
-```bash
-# 启动开发服务器
-vercel dev
-# 或者
-npm run dev
-```
-
-访问 `http://localhost:3000` 查看应用
 
 ## Vercel部署
 
@@ -152,6 +125,16 @@ vercel --prod
 - 城市验证：确保选择的城市在支持列表中
 - API错误处理：网络错误或API错误时显示友好提示
 - 重试机制：支持重新开始占卜
+
+### 4. 测试页面
+
+项目提供了多个测试页面用于验证功能：
+
+- **部署测试** (`/test/test.html`): 验证部署状态和API连接
+- **卡片显示测试** (`/test/card-test.html`): 测试卡片信息显示功能
+- **图片加载测试** (`/test/image-test.html`): 测试图片加载和错误处理
+
+访问这些测试页面可以快速诊断部署和功能问题。
 
 ## 配置说明
 
@@ -227,6 +210,14 @@ curl -X POST 'https://your-app.vercel.app/api/tarot' \
   -H 'Content-Type: application/json' \
   -d '{"birthday":"1990-01-01 12:00","gender":"男","city":"北京市","question":"测试问题"}'
 ```
+
+### 测试页面调试
+
+1. **部署状态测试**: 访问 `/test/test.html` 检查部署和环境变量
+2. **卡片显示测试**: 访问 `/test/card-test.html` 验证卡片渲染功能
+3. **图片加载测试**: 访问 `/test/image-test.html` 测试图片加载和错误处理
+
+这些测试页面提供了详细的调试信息和状态反馈。
 
 ## 未来优化方向
 

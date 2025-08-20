@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片加载测试</title>
+    <link rel="stylesheet" href="../public/styles.css">
+    <style>
+        .test-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 8px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        
+        .test-button.secondary {
+            background: #6b7280;
+        }
+        
+        .test-button.secondary:hover {
+            background: #4b5563;
+        }
+        
+        .status-info {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🖼️ 图片加载测试</h1>
+        
+        <div class="test-section">
+            <h2>测试功能</h2>
+            <button class="test-button" onclick="testValidImages()">测试有效图片</button>
+            <button class="test-button" onclick="testInvalidImages()">测试无效图片</button>
+            <button class="test-button secondary" onclick="testMixedImages()">测试混合图片</button>
+            <button class="test-button secondary" onclick="clearTest()">清除测试</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>测试结果</h2>
+            <div id="testResult" class="status-info">点击测试按钮开始测试...</div>
+        </div>
+        
+        <div class="test-section">
+            <h2>卡片显示区域</h2>
+            <div id="cardArea" class="card-area">
+                <div class="card-placeholder">等待测试数据...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 测试数据
+        const validCards = [
+            {
+                "name_cn": "星币七",
+                "name_en": "Seven of Pentacles",
+                "position": 1,
+                "type": "正位",
+                "url": "https://t.8s8s.com/photo/tarotphoto/72/seven-pentacles.jpg"
+            },
+            {
+                "name_cn": "宝剑三",
+                "name_en": "Three of Swords",
+                "position": 2,
+                "type": "逆位",
+                "url": "https://t.8s8s.com/photo/tarotphoto/72/three-swords.jpg"
+            }
+        ];
+
+        const invalidCards = [
+            {
+                "name_cn": "测试卡片1",
+                "name_en": "Test Card 1",
+                "position": 1,
+                "type": "正位",
+                "url": "https://invalid-url.com/image1.jpg"
+            },
+            {
+                "name_cn": "测试卡片2",
+                "name_en": "Test Card 2",
+                "position": 2,
+                "type": "逆位",
+                "url": "https://invalid-url.com/image2.jpg"
+            }
+        ];
+
+        const mixedCards = [
+            {
+                "name_cn": "星币七",
+                "name_en": "Seven of Pentacles",
+                "position": 1,
+                "type": "正位",
+                "url": "https://t.8s8s.com/photo/tarotphoto/72/seven-pentacles.jpg"
+            },
+            {
+                "name_cn": "无效卡片",
+                "name_en": "Invalid Card",
+                "position": 2,
+                "type": "逆位",
+                "url": "https://invalid-url.com/image.jpg"
+            }
+        ];
+
+        function updateStatus(message) {
+            const statusDiv = document.getElementById('testResult');
+            const timestamp = new Date().toLocaleTimeString();
+            statusDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+        }
+
+        function renderCards(cards, testName) {
+            const cardArea = document.getElementById('cardArea');
+            
+            updateStatus(`开始渲染 ${testName}...`);
+            
+            const cardsHTML = cards.map(card => `
+                <div class="card-item">
+                    <div class="card-image">
+                        <div class="image-loading">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                                    <animate attributeName="stroke-dasharray" values="0 31.416;15.708 15.708;0 31.416" dur="1.5s" repeatCount="indefinite"/>
+                                </svg>
+                            </div>
+                            <img src="${card.url}" alt="${card.name_cn}" 
+                                 onload="handleImageLoad(this, '${card.name_cn}')" 
+                                 onerror="handleImageError(this, '${card.name_cn}')">
+                            <div class="image-error">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="#9ca3af" stroke-width="2"/>
+                                    <path d="M9 9L15 15" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+                                    <path d="M15 9L9 15" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                                <span>图片加载失败</span>
+                            </div>
+                        </div>
+                        <div class="card-info">
+                            <h4>${card.name_cn}</h4>
+                            <p class="card-name-en">${card.name_en}</p>
+                            <p class="card-position">位置 ${card.position} - ${card.type}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            cardArea.innerHTML = `
+                <div class="cards-container">
+                    ${cardsHTML}
+                </div>
+            `;
+            
+            updateStatus(`${testName} 渲染完成，共 ${cards.length} 张卡片`);
+        }
+
+        function handleImageLoad(img, cardName) {
+            img.parentElement.classList.add('loaded');
+            updateStatus(`✅ ${cardName} 图片加载成功`);
+        }
+
+        function handleImageError(img, cardName) {
+            img.parentElement.classList.add('error');
+            updateStatus(`❌ ${cardName} 图片加载失败`);
+        }
+
+        function testValidImages() {
+            updateStatus('=== 测试有效图片 ===');
+            renderCards(validCards, '有效图片测试');
+        }
+
+        function testInvalidImages() {
+            updateStatus('=== 测试无效图片 ===');
+            renderCards(invalidCards, '无效图片测试');
+        }
+
+        function testMixedImages() {
+            updateStatus('=== 测试混合图片 ===');
+            renderCards(mixedCards, '混合图片测试');
+        }
+
+        function clearTest() {
+            const cardArea = document.getElementById('cardArea');
+            const statusDiv = document.getElementById('testResult');
+            
+            cardArea.innerHTML = '<div class="card-placeholder">等待测试数据...</div>';
+            statusDiv.innerHTML = '点击测试按钮开始测试...';
+            
+            updateStatus('测试已清除');
+        }
+
+        // 添加卡片样式
+        const cardStyles = `
+        <style>
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border: 1px solid #e9ecf2;
+            border-radius: 12px;
+            background: #fafbfc;
+            transition: all 0.3s ease;
+        }
+
+        .card-item:hover {
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-image {
+            flex-shrink: 0;
+            width: 80px;
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid #e9ecf2;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .card-image.loaded img {
+            opacity: 1;
+        }
+
+        .image-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-image.loaded .image-loading {
+            display: none;
+        }
+
+        .image-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 12px;
+            text-align: center;
+            gap: 4px;
+        }
+
+        .card-image.error .image-error {
+            display: flex;
+        }
+
+        .card-image.error .image-loading {
+            display: none;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-info h4 {
+            margin: 0 0 4px 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2b2f36;
+        }
+
+        .card-name-en {
+            margin: 0 0 4px 0;
+            font-size: 12px;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .card-position {
+            margin: 0;
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .card-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+                padding: 12px;
+            }
+            
+            .card-image {
+                width: 100px;
+                height: 140px;
+            }
+            
+            .card-info h4 {
+                font-size: 18px;
+            }
+            
+            .card-name-en {
+                font-size: 14px;
+            }
+            
+            .card-position {
+                font-size: 16px;
+            }
+        }
+        </style>
+        `;
+
+        document.head.insertAdjacentHTML('beforeend', cardStyles);
+    </script>
+</body>
+</html>

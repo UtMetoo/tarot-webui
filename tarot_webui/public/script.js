@@ -859,7 +859,23 @@ class TarotApp {
                     const cardsHTML = cards.map(card => `
                         <div class="card-item">
                             <div class="card-image">
-                                <img src="${card.url}" alt="${card.name_cn}" onerror="this.style.display='none'">
+                                <div class="image-loading">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="12" cy="12" r="10" stroke="#667eea" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+                                            <animate attributeName="stroke-dasharray" values="0 31.416;15.708 15.708;0 31.416" dur="1.5s" repeatCount="indefinite"/>
+                                        </svg>
+                                </div>
+                                <img src="${card.url}" alt="${card.name_cn}" 
+                                     onload="this.parentElement.classList.add('loaded')" 
+                                     onerror="this.parentElement.classList.add('error')">
+                                <div class="image-error">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="#9ca3af" stroke-width="2"/>
+                                        <path d="M9 9L15 15" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+                                        <path d="M15 9L9 15" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                    <span>图片加载失败</span>
+                                </div>
                             </div>
                             <div class="card-info">
                                 <h4>${card.name_cn}</h4>
@@ -1026,29 +1042,80 @@ const additionalStyles = `
 .card-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
+    gap: 16px;
+    padding: 16px;
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: 12px;
     background: #fafbfc;
+    transition: all 0.3s ease;
+}
+
+.card-item:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
 }
 
 .card-image {
     flex-shrink: 0;
-    width: 60px;
-    height: 80px;
-    border-radius: 6px;
+    width: 80px;
+    height: 120px;
+    border-radius: 8px;
     overflow: hidden;
-    background: #f0f0f0;
+    background: #f8f9fa;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    border: 1px solid #e9ecf2;
 }
 
 .card-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-image.loaded img {
+    opacity: 1;
+}
+
+.image-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image.loaded .image-loading {
+    display: none;
+}
+
+.image-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 12px;
+    text-align: center;
+    gap: 4px;
+}
+
+.card-image.error .image-error {
+    display: flex;
+}
+
+.card-image.error .image-loading {
+    display: none;
 }
 
 .card-info {
@@ -1094,11 +1161,25 @@ const additionalStyles = `
     .card-item {
         flex-direction: column;
         text-align: center;
+        gap: 12px;
+        padding: 12px;
     }
     
     .card-image {
-        width: 80px;
-        height: 100px;
+        width: 100px;
+        height: 140px;
+    }
+    
+    .card-info h4 {
+        font-size: 18px;
+    }
+    
+    .card-name-en {
+        font-size: 14px;
+    }
+    
+    .card-position {
+        font-size: 16px;
     }
 }
 </style>
