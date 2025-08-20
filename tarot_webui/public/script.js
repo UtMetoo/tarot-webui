@@ -766,6 +766,14 @@ class TarotApp {
                                     cardInfo = data.content;
                                     console.log('收到卡片信息:', cardInfo);
                                     this.updateCardInfo(cardInfo);
+                                } else if (data.content && typeof data.content === 'string' && 
+                                          (data.content.includes('卡片信息：') || 
+                                           data.content.includes('"name_cn"') && 
+                                           data.content.includes('"url"'))) {
+                                    // 检测卡片信息格式
+                                    cardInfo = data.content;
+                                    console.log('检测到卡片信息:', cardInfo);
+                                    this.updateCardInfo(cardInfo);
                                 } else if (data.node_title === 'End') {
                                     // 解析End节点的JSON内容
                                     try {
@@ -849,6 +857,12 @@ class TarotApp {
         const cardArea = document.getElementById('cardArea');
         if (cardArea) {
             console.log('开始更新卡片信息:', content);
+            
+            // 处理带有"卡片信息："前缀的内容
+            if (typeof content === 'string' && content.includes('卡片信息：')) {
+                content = content.replace('卡片信息：', '').trim();
+                console.log('移除前缀后的内容:', content);
+            }
             
             try {
                 // 尝试解析JSON格式的卡片信息
