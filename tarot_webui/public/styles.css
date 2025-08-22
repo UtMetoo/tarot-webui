@@ -578,20 +578,21 @@ select:focus {
     font-style: italic;
 }
 
+/* 修复行距过大的问题 */
 .markdown-content ul {
-    margin: 12px 0;
+    margin: 8px 0;
     padding-left: 24px;
     list-style-type: disc;
 }
 
 .markdown-content ol {
-    margin: 12px 0;
+    margin: 8px 0;
     padding-left: 24px;
     list-style-type: decimal;
 }
 
 .markdown-content li {
-    margin: 6px 0;
+    margin: 3px 0;
     line-height: 1.6;
 }
 
@@ -616,7 +617,7 @@ select:focus {
 }
 
 .markdown-content p {
-    margin: 12px 0;
+    margin: 8px 0;
 }
 
 /* 错误信息样式 */
