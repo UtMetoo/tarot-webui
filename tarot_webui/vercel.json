@@ -8,7 +8,19 @@
     "rewrites": [
       {
         "source": "/test",
-        "destination": "/test.html"
+        "destination": "/test/test.html"
+      },
+      {
+        "source": "/test/card-test",
+        "destination": "/test/card-test.html"
+      },
+      {
+        "source": "/test/image-test",
+        "destination": "/test/image-test.html"
+      },
+      {
+        "source": "/test/markdown-test",
+        "destination": "/test/markdown-test.html"
       }
     ]
   }

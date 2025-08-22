@@ -21,7 +21,7 @@
 - 测试API响应解析
 - 验证卡片布局和样式
 
-**访问方式**: `https://your-domain.vercel.app/test/card-test.html`
+**访问方式**: `https://your-domain.vercel.app/test/card-test`
 
 ### 3. image-test.html - 图片加载测试
 **用途**: 测试图片加载和错误处理
@@ -31,7 +31,7 @@
 - 验证加载状态和错误提示
 - 实时状态反馈
 
-**访问方式**: `https://your-domain.vercel.app/test/image-test.html`
+**访问方式**: `https://your-domain.vercel.app/test/image-test`
 
 ### 4. markdown-test.html - Markdown渲染测试
 **用途**: 测试塔罗牌解读中的Markdown格式渲染
@@ -42,15 +42,15 @@
 - 复杂格式组合测试
 - 实时渲染预览
 
-**访问方式**: `https://your-domain.vercel.app/test/markdown-test.html`
+**访问方式**: `https://your-domain.vercel.app/test/markdown-test`
 
 ## 使用建议
 
-1. **部署后验证**: 部署完成后首先访问 `test.html` 验证基本功能
+1. **部署后验证**: 部署完成后首先访问 `/test` 验证基本功能
 2. **功能测试**: 使用各个测试页面验证具体功能
-   - `card-test.html` - 验证卡片显示功能
-   - `image-test.html` - 验证图片加载处理
-   - `markdown-test.html` - 验证Markdown解读渲染
+   - `/test/card-test` - 验证卡片显示功能
+   - `/test/image-test` - 验证图片加载处理
+   - `/test/markdown-test` - 验证Markdown解读渲染
 3. **问题诊断**: 遇到问题时使用相应的测试页面进行诊断
 
 ## 注意事项
