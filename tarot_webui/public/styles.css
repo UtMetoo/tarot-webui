@@ -507,20 +507,333 @@ select:focus {
 }
 
 /* 滚动条样式 */
-.city-dropdown::-webkit-scrollbar {
-    width: 8px;
-}
-
-.city-dropdown::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.city-dropdown::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-}
-
 .city-dropdown::-webkit-scrollbar-thumb:hover {
     background: #a8a8a8;
+}
+
+/* 城市选择器头部样式 */
+.city-option-header {
+    padding: 10px 15px;
+    background: #f8f9ff;
+    font-size: 12px;
+    color: var(--brand-color);
+    border-bottom: 1px solid #eee;
+    font-weight: 600;
+}
+
+/* 塔罗牌结果样式 */
+.tarot-result {
+    text-align: left;
+}
+
+.tarot-result h3 {
+    color: var(--brand-color);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.result-content {
+    line-height: 1.8;
+    font-size: 16px;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+/* Markdown内容样式 */
+.markdown-content {
+    white-space: normal;
+}
+
+.markdown-content h1 {
+    font-size: 1.8rem;
+    color: var(--brand-color);
+    margin: 24px 0 16px 0;
+    border-bottom: 2px solid var(--brand-color);
+    padding-bottom: 8px;
+}
+
+.markdown-content h2 {
+    font-size: 1.5rem;
+    color: var(--brand-color);
+    margin: 20px 0 12px 0;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 6px;
+}
+
+.markdown-content h3 {
+    font-size: 1.3rem;
+    color: #2b2f36;
+    margin: 16px 0 10px 0;
+    font-weight: 600;
+}
+
+.markdown-content strong {
+    color: var(--brand-color);
+    font-weight: 600;
+}
+
+.markdown-content em {
+    color: #666;
+    font-style: italic;
+}
+
+.markdown-content ul {
+    margin: 12px 0;
+    padding-left: 24px;
+    list-style-type: disc;
+}
+
+.markdown-content ol {
+    margin: 12px 0;
+    padding-left: 24px;
+    list-style-type: decimal;
+}
+
+.markdown-content li {
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.markdown-content a {
+    color: var(--brand-color);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.markdown-content a:hover {
+    border-bottom-color: var(--brand-color);
+}
+
+.markdown-content code {
+    background: #f5f7fa;
+    color: #e74c3c;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+}
+
+.markdown-content p {
+    margin: 12px 0;
+}
+
+/* 错误信息样式 */
+.error-message {
+    text-align: center;
+    padding: 30px;
+}
+
+.error-message h3 {
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+.error-message p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.retry-btn {
+    background: var(--brand-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.retry-btn:hover {
+    background: #5a6fd8;
+}
+
+/* 卡片显示样式 */
+.cards-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+    padding: 0 16px;
+    overflow-x: auto;
+}
+
+.card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: #fafbfc;
+    transition: all 0.3s ease;
+    flex: 0 0 auto;
+    max-width: 240px;
+}
+
+.card-item:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.card-image {
+    width: 200px;
+    height: 340px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 1px solid #e9ecf2;
+    margin-bottom: 12px;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-image.loaded img {
+    opacity: 1;
+}
+
+.image-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image.loaded .image-loading {
+    display: none;
+}
+
+.image-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 12px;
+    text-align: center;
+    gap: 4px;
+}
+
+.card-image.error .image-error {
+    display: flex;
+}
+
+.card-image.error .image-loading {
+    display: none;
+}
+
+.card-info {
+    text-align: center;
+    width: 100%;
+}
+
+.card-info h4 {
+    margin: 0 0 6px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #2b2f36;
+}
+
+.card-name-en {
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+.card-type {
+    margin: 0;
+    font-size: 14px;
+    color: var(--brand-color);
+    font-weight: 500;
+    padding: 4px 8px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.card-content {
+    color: #2b2f36;
+    line-height: 1.6;
+}
+
+/* 卡片移动端优化 */
+@media (max-width: 768px) {
+    .result-content {
+        font-size: 14px;
+    }
+    
+    .tarot-result h3 {
+        font-size: 1.3rem;
+    }
+    
+    .cards-container {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+    
+    .card-item {
+        max-width: 200px;
+        padding: 12px;
+    }
+    
+    .card-image {
+        width: 150px;
+        height: 255px;
+        margin-bottom: 10px;
+    }
+    
+    .card-info h4 {
+        font-size: 16px;
+    }
+    
+    .card-name-en {
+        font-size: 11px;
+    }
+    
+    .card-type {
+        font-size: 13px;
+        padding: 3px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cards-container {
+        gap: 12px;
+    }
+    
+    .card-item {
+        max-width: 180px;
+        padding: 10px;
+    }
+    
+    .card-image {
+        width: 120px;
+        height: 204px;
+    }
+    
+    .card-info h4 {
+        font-size: 15px;
+    }
 }
