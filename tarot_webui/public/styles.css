@@ -838,3 +838,26 @@ select:focus {
         font-size: 15px;
     }
 }
+
+/* Mermaid图表样式 */
+.mermaid {
+    text-align: center;
+    margin: 16px 0;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecf2;
+}
+
+.mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 确保Mermaid图表在移动端也能正常显示 */
+@media (max-width: 768px) {
+    .mermaid {
+        padding: 12px;
+        margin: 12px 0;
+    }
+}

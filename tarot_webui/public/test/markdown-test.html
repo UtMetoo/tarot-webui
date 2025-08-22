@@ -238,8 +238,37 @@
             <button class="test-button" onclick="testMarkdown('test3')">渲染测试3</button>
         </div>
         
+        <div class="test-section">
+            <div class="test-title">测试4：Mermaid图表</div>
+            <div class="raw-markdown" id="test4-raw"># 项目时间线
+
+## 婚礼筹备计划
+
+```mermaid
+timeline
+2024 Q4 : 确定预算框架
+2025 Q1 : 完成重要供应商预定
+2025 Q2 : 发送请柬
+2025 Q3 : 婚礼举行
+```
+
+这个时间线展示了整个筹备过程的关键节点。</div>
+            <div class="rendered-result" id="test4-result"></div>
+            <button class="test-button" onclick="testMarkdown('test4')">渲染测试4</button>
+        </div>
+        
         <button class="test-button" onclick="testAllMarkdown()">渲染所有测试</button>
     </div>
+
+    <!-- 添加Mermaid.js支持 -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <script>
+        // 初始化Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default'
+        });
+    </script>
 
     <script src="../js/cities.js"></script>
     <script src="../js/markdown-renderer.js"></script>
@@ -255,6 +284,11 @@
                 // 使用新的MarkdownRenderer静态方法
                 const renderedHtml = MarkdownRenderer.render(rawText);
                 resultElement.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
+                
+                // 重新渲染Mermaid图表
+                if (typeof mermaid !== 'undefined') {
+                    mermaid.init();
+                }
             }
         }
         
@@ -262,6 +296,7 @@
             testMarkdown('test1');
             testMarkdown('test2');
             testMarkdown('test3');
+            testMarkdown('test4');
         }
         
         // 页面加载时自动渲染所有测试

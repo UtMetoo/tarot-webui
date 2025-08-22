@@ -1,12 +1,12 @@
 /**
  * Markdown渲染器模块
  * 处理塔罗牌解读内容的Markdown格式渲染
- * 支持标题、粗体、斜体、列表、链接等基本格式
+ * 支持标题、粗体、斜体、列表、链接、Mermaid图表等格式
  */
 class MarkdownRenderer {
     /**
-     * 简单的Markdown渲染器
-     * 支持标题、粗体、斜体、列表、链接等基本格式
+     * 增强的Markdown渲染器
+     * 支持标题、粗体、斜体、列表、链接、Mermaid图表等基本格式
      */
     static render(markdown) {
         if (!markdown || typeof markdown !== 'string') {
@@ -15,7 +15,11 @@ class MarkdownRenderer {
 
         let html = markdown;
 
-        // 先处理代码块，避免其他格式化影响代码内容
+        // 先处理Mermaid代码块，避免其他格式化影响
+        html = this.processMermaidBlocks(html);
+
+        // 处理普通代码块
+        html = html.replace(/```([^`]+)```/g, '<pre><code>$1</code></pre>');
         html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
         // 处理标题 (### ## #)
@@ -51,6 +55,16 @@ class MarkdownRenderer {
         html = this.cleanupBreakTags(html);
 
         return html;
+    }
+
+    /**
+     * 处理Mermaid代码块
+     */
+    static processMermaidBlocks(html) {
+        return html.replace(/```mermaid\s*([\s\S]*?)```/g, (match, content) => {
+            const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+            return `<div class="mermaid" id="${id}">${content.trim()}</div>`;
+        });
     }
 
     /**

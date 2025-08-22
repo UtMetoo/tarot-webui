@@ -16,11 +16,30 @@
 
 ## 技术架构
 
-- **前端**: 纯HTML/CSS/JavaScript，无需构建步骤
+- **前端**: 纯HTML/CSS/JavaScript，采用模块化架构，无需构建步骤
 - **后端**: Vercel Serverless Functions处理API调用
 - **API**: 集成Coze平台的工作流API
 - **部署**: Vercel平台，支持自动部署
 - **设计**: 响应式设计，支持移动端和桌面端
+
+### 前端模块化架构
+
+项目采用模块化设计，将原本1469行的单一JavaScript文件拆分为5个功能模块：
+
+| 模块 | 功能 | 行数 | 依赖 |
+|------|------|------|------|
+| `cities.js` | 城市数据和选择器管理 | 584 | 无 |
+| `markdown-renderer.js` | Markdown格式渲染 | 188 | 无 |
+| `ui-utils.js` | UI状态和元素控制 | 180 | `markdown-renderer.js` |
+| `tarot-app.js` | 核心业务逻辑 | 260 | `cities.js`, `ui-utils.js` |
+| `app.js` | 应用启动入口 | 66 | 所有模块 |
+
+**模块化优势:**
+- ✅ **易于维护**: 每个模块职责单一，便于调试和修改
+- ✅ **代码复用**: 各模块可独立测试和复用
+- ✅ **团队协作**: 多人可同时编辑不同模块
+- ✅ **性能优化**: 可按需加载特定模块
+- ✅ **向后兼容**: 保留原始文件备份
 
 ## 页面设计规范
 
@@ -54,8 +73,14 @@ tarot_webui/
 │       └── cookies.js    # 会话Cookie管理
 ├── public/                 # 静态文件目录
 │   ├── index.html         # 主页面
-│   ├── styles.css         # 样式文件
-│   ├── script.js          # 前端逻辑
+│   ├── styles.css         # 样式文件（含组件样式）
+│   ├── js/                # JavaScript模块目录
+│   │   ├── cities.js          # 城市数据模块 (584行)
+│   │   ├── markdown-renderer.js  # Markdown渲染器 (188行)
+│   │   ├── ui-utils.js        # UI工具函数 (180行)
+│   │   ├── tarot-app.js       # 核心应用逻辑 (260行)
+│   │   └── app.js             # 应用入口 (66行)
+│   ├── script.js.backup   # 原始文件备份
 │   ├── test.html          # 部署测试页面
 │   └── test/              # 测试页面目录
 │       ├── card-test.html    # 卡片显示测试
@@ -67,7 +92,6 @@ tarot_webui/
 ├── .gitignore             # Git忽略文件
 ├── DEPLOYMENT.md          # 部署指南
 ├── ENV_SETUP.md           # 环境变量设置指南
-├── TROUBLESHOOTING.md     # 故障排除指南
 └── README.md              # 项目说明文档
 ```
 
@@ -162,10 +186,32 @@ vercel --prod
 
 ### 前端开发
 
-- 使用原生JavaScript，无需构建工具
+- 使用原生JavaScript，采用模块化架构，无需构建工具
 - 采用ES6+语法和现代Web API
 - 响应式设计，支持移动端
 - 遵循苹果设计规范
+
+#### 模块化开发指南
+
+**模块依赖关系:**
+```
+app.js (入口)
+  └── tarot-app.js (核心逻辑)
+      ├── cities.js (城市功能)
+      ├── ui-utils.js (UI工具)
+      └── markdown-renderer.js (内容渲染)
+```
+
+**开发规范:**
+- 每个模块通过 `window.ModuleName` 暴露到全局
+- 模块间通过依赖注入方式协作
+- 保持模块职责单一，避免循环依赖
+- 新增功能优先考虑是否可独立为模块
+
+**调试技巧:**
+- 使用浏览器控制台检查模块加载状态
+- 通过 `window.tarotApp` 访问主应用实例
+- 各模块支持独立测试和调试
 
 ### API开发
 
@@ -198,6 +244,12 @@ vercel --prod
    - 确认vercel.json配置正确
    - 检查环境变量在生产环境中是否设置
    - 查看Vercel部署日志
+
+4. **模块加载问题**
+   - 检查浏览器控制台是否有模块加载错误
+   - 确认所有JS模块文件路径正确
+   - 验证模块依赖关系是否正确
+   - 检查 `window.ModuleName` 是否正常暴露
 
 ### 调试方法
 

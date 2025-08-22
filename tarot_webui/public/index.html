@@ -156,6 +156,20 @@
             </footer>
         </div>
 
+        <!-- 在现有script标签之前添加Mermaid.js -->
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+        <script>
+            // 初始化Mermaid
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true
+                }
+            });
+        </script>
+
         <script src="js/cities.js"></script>
         <script src="js/markdown-renderer.js"></script>
         <script src="js/ui-utils.js"></script>
