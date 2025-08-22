@@ -1280,9 +1280,10 @@ const additionalStyles = `
 .cards-container {
     display: flex;
     justify-content: center;
-    gap: 24px;
-    flex-wrap: wrap;
+    gap: 20px;
+    flex-wrap: nowrap;
     padding: 0 16px;
+    overflow-x: auto;
 }
 
 .card-item {
@@ -1412,8 +1413,8 @@ const additionalStyles = `
     }
     
     .cards-container {
-        flex-direction: column;
-        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 16px;
     }
     

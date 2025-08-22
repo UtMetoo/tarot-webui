@@ -12,7 +12,7 @@
 - 验证环境变量配置
 - 测试塔罗牌API功能
 
-**访问方式**: `https://your-domain.vercel.app/test/test.html`
+**访问方式**: `https://your-domain.vercel.app/test`
 
 ### 2. card-test.html - 卡片显示测试
 **用途**: 测试卡片信息显示功能
