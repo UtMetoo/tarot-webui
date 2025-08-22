@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Markdown渲染测试 - 塔罗牌占卜</title>
-    <link rel="stylesheet" href="../public/styles.css">
+    <link rel="stylesheet" href="../styles.css">
     <style>
         .test-container {
             max-width: 800px;
@@ -57,6 +57,85 @@
         
         .test-button:hover {
             background: #5a6fd8;
+        }
+
+        /* Markdown内容样式 - 与主应用保持一致 */
+        .markdown-content {
+            white-space: normal;
+        }
+
+        .markdown-content h1 {
+            font-size: 1.8rem;
+            color: var(--brand-color);
+            margin: 24px 0 16px 0;
+            border-bottom: 2px solid var(--brand-color);
+            padding-bottom: 8px;
+        }
+
+        .markdown-content h2 {
+            font-size: 1.5rem;
+            color: var(--brand-color);
+            margin: 20px 0 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 6px;
+        }
+
+        .markdown-content h3 {
+            font-size: 1.3rem;
+            color: #2b2f36;
+            margin: 16px 0 10px 0;
+            font-weight: 600;
+        }
+
+        .markdown-content strong {
+            color: var(--brand-color);
+            font-weight: 600;
+        }
+
+        .markdown-content em {
+            color: #666;
+            font-style: italic;
+        }
+
+        .markdown-content ul {
+            margin: 12px 0;
+            padding-left: 24px;
+            list-style-type: disc;
+        }
+
+        .markdown-content ol {
+            margin: 12px 0;
+            padding-left: 24px;
+            list-style-type: decimal;
+        }
+
+        .markdown-content li {
+            margin: 6px 0;
+            line-height: 1.6;
+        }
+
+        .markdown-content a {
+            color: var(--brand-color);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        .markdown-content a:hover {
+            border-bottom-color: var(--brand-color);
+        }
+
+        .markdown-content code {
+            background: #f5f7fa;
+            color: #e74c3c;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+
+        .markdown-content p {
+            margin: 12px 0;
         }
     </style>
 </head>
@@ -157,7 +236,7 @@
         <button class="test-button" onclick="testAllMarkdown()">渲染所有测试</button>
     </div>
 
-    <script src="../public/script.js"></script>
+    <script src="../script.js"></script>
     <script>
         // 创建一个临时的TarotApp实例来测试Markdown渲染
         const testApp = new TarotApp();
