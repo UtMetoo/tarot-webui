@@ -48,8 +48,8 @@ class MarkdownRenderer {
         // 处理段落
         html = this.processParagraphs(html);
 
-        // 处理换行符（在段落处理之后）
-        html = html.replace(/\n/g, '<br>');
+        // 处理换行符（在段落处理之后），但排除Mermaid代码块
+        html = this.processLineBreaks(html);
 
         // 清理多余的br标签
         html = this.cleanupBreakTags(html);
@@ -65,6 +65,32 @@ class MarkdownRenderer {
             const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
             return `<div class="mermaid" id="${id}">${content.trim()}</div>`;
         });
+    }
+
+    /**
+     * 处理换行符，但排除Mermaid代码块
+     */
+    static processLineBreaks(html) {
+        // 使用正则表达式匹配Mermaid代码块，并临时替换为占位符
+        const mermaidBlocks = [];
+        let blockIndex = 0;
+        
+        html = html.replace(/<div class="mermaid" id="[^"]*">([\s\S]*?)<\/div>/g, (match, content) => {
+            const placeholder = `__MERMAID_BLOCK_${blockIndex}__`;
+            mermaidBlocks[blockIndex] = match;
+            blockIndex++;
+            return placeholder;
+        });
+        
+        // 处理换行符
+        html = html.replace(/\n/g, '<br>');
+        
+        // 恢复Mermaid代码块
+        mermaidBlocks.forEach((block, index) => {
+            html = html.replace(`__MERMAID_BLOCK_${index}__`, block);
+        });
+        
+        return html;
     }
 
     /**
