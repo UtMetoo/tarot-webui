@@ -278,6 +278,9 @@ curl -X POST 'https://your-app.vercel.app/api/tarot' \
 ## 未来优化方向
 
 1. **用户认证系统**: 支持用户注册、登录功能，用户凭证保存在飞书多维表格中
+   - 📋 [开发计划文档](./USER_AUTH_DEVELOPMENT_PLAN.md)
+   - 📊 [任务跟踪表](./AUTH_TASK_TRACKER.md)
+   - 🎯 预计工期：2-3周
 2. **PWA支持**: 添加Service Worker，支持离线使用
 3. **历史记录**: 保存用户的占卜历史到本地存储
 4. **多语言**: 支持英文等其他语言界面

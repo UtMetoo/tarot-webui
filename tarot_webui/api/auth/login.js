@@ -1,6 +1,7 @@
 // 登录接口（骨架版）
-import { getTenantAccessToken, findUserByEmail, verifyPassword } from '../_utils/feishu.js';
-import { setSessionCookie } from '../_utils/cookies.js';
+import { findUserByEmail, verifyPassword } from '../_utils/feishu.js';
+import { generateToken } from '../_utils/jwt.js';
+import { setCookie } from '../_utils/cookies.js';
 
 function json(res, status, data) {
 	res.status(status).setHeader('Content-Type', 'application/json');
@@ -16,20 +17,45 @@ export default async function handler(req, res) {
 
 	try {
 		const { email, password } = req.body || {};
-		if (!email || !password) return json(res, 400, { error: '缺少 email 或 password' });
 
-		await getTenantAccessToken().catch(() => null);
-		const user = await findUserByEmail(email);
-		if (!user) return json(res, 401, { error: '账号或密码错误' });
+		// 参数验证
+		if (!email || !password) {
+			return json(res, 400, { error: '缺少 email 或 password' });
+		}
 
-		// TODO: 使用 bcrypt.compare 校验密码
-		const ok = await verifyPassword(password, user.passwordHash || '');
-		if (!ok) return json(res, 401, { error: '账号或密码错误' });
+		// 查找用户
+		const userRecord = await findUserByEmail(email);
+		if (!userRecord) {
+			return json(res, 401, { error: '邮箱或密码错误' });
+		}
 
-		// TODO: 生成真实会话 token（建议 JWT 或服务端会话 ID）
-		setSessionCookie(res, 'TODO_SESSION_TOKEN');
-		return json(res, 200, { message: '登录成功（占位）', userId: user.userId || 'TODO', todo: true });
+		// 验证密码
+		const passwordHash = userRecord.fields.password_hash;
+		const isValidPassword = await verifyPassword(password, passwordHash);
+
+		if (!isValidPassword) {
+			return json(res, 401, { error: '邮箱或密码错误' });
+		}
+
+		// 生成JWT令牌
+		const userId = userRecord.record_id;
+		const token = generateToken({ userId, email });
+
+		// 设置Cookie
+		setCookie(res, 'authToken', token, {
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7天
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax'
+		});
+
+		return json(res, 200, {
+			message: '登录成功',
+			user: { userId, email },
+			token
+		});
 	} catch (err) {
+		console.error('登录错误:', err);
 		return json(res, 500, { error: '服务器错误', message: err.message });
 	}
 }
