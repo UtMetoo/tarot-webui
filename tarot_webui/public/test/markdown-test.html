@@ -236,18 +236,19 @@
         <button class="test-button" onclick="testAllMarkdown()">渲染所有测试</button>
     </div>
 
-    <script src="../script.js"></script>
+    <script src="../js/cities.js"></script>
+    <script src="../js/markdown-renderer.js"></script>
+    <script src="../js/ui-utils.js"></script>
+    <script src="../js/tarot-app.js"></script>
     <script>
-        // 创建一个临时的TarotApp实例来测试Markdown渲染
-        const testApp = new TarotApp();
-        
         function testMarkdown(testId) {
             const rawElement = document.getElementById(`${testId}-raw`);
             const resultElement = document.getElementById(`${testId}-result`);
             
             if (rawElement && resultElement) {
                 const rawText = rawElement.textContent;
-                const renderedHtml = testApp.renderMarkdown(rawText);
+                // 使用新的MarkdownRenderer静态方法
+                const renderedHtml = MarkdownRenderer.render(rawText);
                 resultElement.innerHTML = `<div class="markdown-content">${renderedHtml}</div>`;
             }
         }
@@ -260,7 +261,13 @@
         
         // 页面加载时自动渲染所有测试
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(testAllMarkdown, 500);
+            // 检查MarkdownRenderer是否已加载
+            if (typeof MarkdownRenderer !== 'undefined') {
+                setTimeout(testAllMarkdown, 500);
+            } else {
+                console.error('MarkdownRenderer 模块未加载');
+                document.body.innerHTML += '<div style="color: red; padding: 20px;">错误：MarkdownRenderer 模块未加载</div>';
+            }
         });
     </script>
 </body>
