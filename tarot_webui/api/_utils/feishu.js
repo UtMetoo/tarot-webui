@@ -1,5 +1,11 @@
 import bcrypt from 'bcryptjs';
-import fetch from 'node-fetch';
+
+// 动态导入node-fetch
+let fetch;
+(async () => {
+  const fetchModule = await import('node-fetch');
+  fetch = fetchModule.default;
+})();
 
 // 飞书API配置
 const FEISHU_APP_ID = process.env.FEISHU_APP_ID;
@@ -13,9 +19,14 @@ let tokenExpireTime = 0;
 
 /**
  * 获取 tenant_access_token
- * 实现通过 FEISHU_APP_ID / FEISHU_APP_SECRET 获取并缓存 token
  */
 export async function getTenantAccessToken() {
+  // 确保fetch已加载
+  if (!fetch) {
+    const fetchModule = await import('node-fetch');
+    fetch = fetchModule.default;
+  }
+
   // 检查缓存是否有效
   if (cachedToken && Date.now() < tokenExpireTime) {
     return cachedToken;
@@ -52,10 +63,15 @@ export async function getTenantAccessToken() {
 
 /**
  * 在多维表格中根据邮箱查询用户
- * 使用 FEISHU_BITABLE_APP_TOKEN / FEISHU_BITABLE_TABLE_ID 查询记录
  */
 export async function findUserByEmail(email) {
   try {
+    // 确保fetch已加载
+    if (!fetch) {
+      const fetchModule = await import('node-fetch');
+      fetch = fetchModule.default;
+    }
+
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -85,10 +101,15 @@ export async function findUserByEmail(email) {
 
 /**
  * 在多维表格中创建用户
- * 写入 email / password_hash / created_at 等字段
  */
 export async function createUser({ email, passwordHash }) {
   try {
+    // 确保fetch已加载
+    if (!fetch) {
+      const fetchModule = await import('node-fetch');
+      fetch = fetchModule.default;
+    }
+
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -125,10 +146,15 @@ export async function createUser({ email, passwordHash }) {
 
 /**
  * 根据会话中的 userId 查询用户资料
- * 用主键或唯一字段查询多维表
  */
 export async function getUserById(userId) {
   try {
+    // 确保fetch已加载
+    if (!fetch) {
+      const fetchModule = await import('node-fetch');
+      fetch = fetchModule.default;
+    }
+
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -163,7 +189,6 @@ export async function getUserById(userId) {
 
 /**
  * 校验密码
- * 使用 bcrypt 进行加盐哈希与校验
  */
 export async function verifyPassword(plain, passwordHash) {
   try {
@@ -176,7 +201,6 @@ export async function verifyPassword(plain, passwordHash) {
 
 /**
  * 生成密码哈希
- * 使用 bcrypt 进行加盐哈希
  */
 export async function hashPassword(plain) {
   try {
@@ -187,6 +211,3 @@ export async function hashPassword(plain) {
     throw error;
   }
 }
-
-
-
