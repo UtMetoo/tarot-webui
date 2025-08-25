@@ -21,6 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof TarotApp === 'undefined') {
             throw new Error('TarotApp 模块未加载');
         }
+        if (typeof AuthModule === 'undefined') {
+            throw new Error('AuthModule 模块未加载');
+        }
+        
+        // 初始化认证模块
+        AuthModule.init();
         
         // 初始化应用
         const app = new TarotApp();
