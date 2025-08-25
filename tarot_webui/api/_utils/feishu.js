@@ -197,17 +197,23 @@ export async function getUserById(userId) {
       return null;
     }
 
+    // 检查 record 是否存在
+    if (!data.data?.record) {
+      console.error('getUserById - record 不存在:', data);
+      return null;
+    }
+
     // 检查 fields 是否存在
-    if (!data.data?.fields) {
+    if (!data.data.record?.fields) {
       console.error('getUserById - fields 不存在:', data);
       return null;
     }
 
     // 解析飞书字段值
-    const fields = data.data.fields;
+    const fields = data.data.record.fields;
     
     return {
-      userId: data.data.record_id,
+      userId: data.data.record.record_id,
       email: parseFeishuField(fields.email),
       createdAt: parseFeishuField(fields.created_at),
       updatedAt: parseFeishuField(fields.updated_at),
