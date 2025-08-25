@@ -92,7 +92,21 @@ export async function findUserByEmail(email) {
       return null;
     }
 
-    return data.data.items.length > 0 ? data.data.items[0] : null;
+    if (data.data.items.length === 0) {
+      return null;
+    }
+
+    // 处理飞书多维表格的字段格式
+    const item = data.data.items[0];
+    const fields = item.fields;
+    
+    return {
+      userId: item.record_id,
+      email: fields.email?.[0]?.text || fields.email?.[0]?.link || '',
+      passwordHash: fields.password_hash?.[0]?.text || null,
+      createdAt: fields.created_at,
+      updatedAt: fields.updated_at,
+    };
   } catch (error) {
     console.error('查询用户错误:', error);
     return null;
@@ -175,14 +189,58 @@ export async function getUserById(userId) {
       return null;
     }
 
+    // 处理飞书多维表格的字段格式
+    const fields = data.data.fields;
+    
     return {
       userId: data.data.record_id,
-      email: data.data.fields.email,
-      createdAt: data.data.fields.created_at,
-      updatedAt: data.data.fields.updated_at,
+      email: fields.email?.[0]?.text || fields.email?.[0]?.link || '',
+      passwordHash: fields.password_hash?.[0]?.text || null,
+      createdAt: fields.created_at,
+      updatedAt: fields.updated_at,
     };
   } catch (error) {
     console.error('获取用户错误:', error);
+    return null;
+  }
+}
+
+/**
+ * 获取用户密码哈希
+ */
+export async function getUserPasswordHash(userId) {
+  try {
+    // 确保fetch已加载
+    if (!fetch) {
+      const fetchModule = await import('node-fetch');
+      fetch = fetchModule.default;
+    }
+
+    const token = await getTenantAccessToken();
+    
+    const response = await fetch(
+      `https://open.feishu.cn/open-apis/bitable/v1/apps/${FEISHU_BITABLE_APP_TOKEN}/tables/${FEISHU_BITABLE_TABLE_ID}/records/${userId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const data = await response.json();
+    
+    if (data.code !== 0) {
+      console.error('获取用户密码哈希失败:', data);
+      return null;
+    }
+
+    // 处理飞书多维表格的字段格式
+    const fields = data.data.fields;
+    return fields.password_hash?.[0]?.text || null;
+  } catch (error) {
+    console.error('获取用户密码哈希错误:', error);
     return null;
   }
 }
