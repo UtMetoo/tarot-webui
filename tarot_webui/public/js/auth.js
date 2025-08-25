@@ -30,6 +30,9 @@ window.AuthModule = {
         // 绑定事件
         this.bindEvents();
         
+        // 初始化界面状态（隐藏塔罗牌界面）
+        this.initializeInterfaceState();
+        
         // 检查用户登录状态
         this.checkAuthStatus();
         
@@ -163,6 +166,21 @@ window.AuthModule = {
         
         // 登出
         document.getElementById('logout-btn').addEventListener('click', () => this.handleLogout());
+    },
+    
+    /**
+     * 初始化界面状态
+     */
+    initializeInterfaceState() {
+        // 默认隐藏塔罗牌主界面
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.style.display = 'none';
+            mainContent.style.opacity = '0';
+            mainContent.style.transition = 'opacity 0.3s ease';
+        }
+        
+        console.log('界面状态初始化完成：塔罗牌界面已隐藏');
     },
     
     /**
@@ -341,6 +359,12 @@ window.AuthModule = {
             document.querySelector('.user-since span').textContent = date.toLocaleDateString('zh-CN');
         }
         
+        // 渐进式显示塔罗牌界面
+        this.showTarotInterface();
+        
+        // 创建响应式浮动用户状态栏
+        this.createFloatingUserStatus();
+        
         // 触发用户状态变化事件
         this.triggerEvent('userLogin', { user });
     },
@@ -351,6 +375,12 @@ window.AuthModule = {
     clearUser() {
         this.currentUser = null;
         this.isAuthenticated = false;
+        
+        // 渐进式隐藏塔罗牌界面
+        this.hideTarotInterface();
+        
+        // 移除浮动用户状态栏
+        this.removeFloatingUserStatus();
         
         // 更新UI
         this.elements.userStatus.style.display = 'none';
@@ -434,6 +464,103 @@ window.AuthModule = {
      */
     getCurrentUser() {
         return this.currentUser;
+    },
+    
+    /**
+     * 显示塔罗牌界面（渐进式）
+     */
+    showTarotInterface() {
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            // 先显示元素，然后淡入
+            mainContent.style.display = 'block';
+            
+            // 使用 requestAnimationFrame 确保显示后再开始动画
+            requestAnimationFrame(() => {
+                mainContent.style.opacity = '1';
+            });
+        }
+        
+        console.log('塔罗牌界面已显示');
+    },
+    
+    /**
+     * 隐藏塔罗牌界面（渐进式）
+     */
+    hideTarotInterface() {
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            // 先淡出，然后隐藏
+            mainContent.style.opacity = '0';
+            
+            // 等待动画完成后隐藏元素
+            setTimeout(() => {
+                mainContent.style.display = 'none';
+            }, 300); // 与CSS过渡时间匹配
+        }
+        
+        console.log('塔罗牌界面已隐藏');
+    },
+    
+    /**
+     * 创建响应式浮动用户状态栏
+     */
+    createFloatingUserStatus() {
+        // 移除可能存在的旧状态栏
+        this.removeFloatingUserStatus();
+        
+        // 创建浮动用户状态栏
+        const floatingStatus = document.createElement('div');
+        floatingStatus.id = 'floating-user-status';
+        floatingStatus.className = 'floating-user-status';
+        floatingStatus.innerHTML = `
+            <div class="user-info-compact">
+                <div class="user-avatar-small">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="8" r="5" fill="currentColor"/>
+                        <path d="M20 21C20 16.5817 16.4183 13 12 13C7.58172 13 4 16.5817 4 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="user-email-compact"></div>
+                <button class="logout-btn-compact" type="button" title="登出">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        `;
+        
+        document.body.appendChild(floatingStatus);
+        
+        // 更新用户信息
+        floatingStatus.querySelector('.user-email-compact').textContent = this.currentUser.email;
+        
+        // 绑定登出事件
+        floatingStatus.querySelector('.logout-btn-compact').addEventListener('click', () => {
+            this.handleLogout();
+        });
+        
+        // 隐藏原始认证容器
+        this.elements.authContainer.style.display = 'none';
+        
+        console.log('浮动用户状态栏已创建');
+    },
+    
+    /**
+     * 移除响应式浮动用户状态栏
+     */
+    removeFloatingUserStatus() {
+        const floatingStatus = document.getElementById('floating-user-status');
+        if (floatingStatus) {
+            floatingStatus.remove();
+        }
+        
+        // 显示原始认证容器
+        this.elements.authContainer.style.display = 'block';
+        
+        console.log('浮动用户状态栏已移除');
     },
     
     /**

@@ -336,6 +336,90 @@
     left: 100%;
 }
 
+/* 浮动用户状态栏 */
+.floating-user-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    padding: 12px 16px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease-out;
+}
+
+.user-info-compact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-avatar-small {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+}
+
+.user-email-compact {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--brand-color);
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.logout-btn-compact {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.logout-btn-compact:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .floating-user-status {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .user-email-compact {
+        max-width: 100px;
+    }
+}
+
 /* 暗色模式支持 */
 @media (prefers-color-scheme: dark) {
     .auth-container {
@@ -365,5 +449,10 @@
     
     .auth-btn.active {
         background: rgba(60, 60, 60, 0.8);
+    }
+    
+    .floating-user-status {
+        background: rgba(30, 30, 30, 0.95);
+        border-color: rgba(255, 255, 255, 0.1);
     }
 }
