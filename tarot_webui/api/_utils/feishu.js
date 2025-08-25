@@ -124,8 +124,8 @@ export async function createUser({ email, passwordHash }) {
           fields: {
             email: email,
             password_hash: passwordHash,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
+            created_at: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+            updated_at: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
           },
         }),
       }
