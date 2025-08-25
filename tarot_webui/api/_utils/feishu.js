@@ -113,9 +113,16 @@ export async function findUserByEmail(email) {
       return null;
     }
 
-    // 检查 data.data 和 items 是否存在
-    if (!data.data || !data.data.items) {
-      console.error('查询用户失败: data.data 或 items 不存在:', data);
+    // 检查 data.data 是否存在
+    if (!data.data) {
+      console.error('查询用户失败: data.data 不存在:', data);
+      return null;
+    }
+
+    // 检查是否有查询结果
+    if (!data.data.items) {
+      // 用户不存在，这是正常情况，不需要记录为错误
+      console.log(`用户不存在: ${email} (total: ${data.data.total || 0})`);
       return null;
     }
 

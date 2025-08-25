@@ -274,6 +274,7 @@
 - [x] 创建测试界面和工具
 - [x] 修复测试脚本路径问题
 - [x] 修复 findUserByEmail 函数中的 undefined 错误
+- [x] 优化 findUserByEmail 函数的错误日志
 
 ---
 
