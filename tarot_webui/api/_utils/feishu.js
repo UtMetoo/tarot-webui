@@ -113,6 +113,12 @@ export async function findUserByEmail(email) {
       return null;
     }
 
+    // 检查 data.data 和 items 是否存在
+    if (!data.data || !data.data.items) {
+      console.error('查询用户失败: data.data 或 items 不存在:', data);
+      return null;
+    }
+
     // 返回原始结构，保持与登录API的兼容性
     return data.data.items.length > 0 ? data.data.items[0] : null;
   } catch (error) {
