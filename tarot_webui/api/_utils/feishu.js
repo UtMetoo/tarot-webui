@@ -18,14 +18,41 @@ let cachedToken = null;
 let tokenExpireTime = 0;
 
 /**
- * 获取 tenant_access_token
+ * 确保fetch已加载
  */
-export async function getTenantAccessToken() {
-  // 确保fetch已加载
+async function ensureFetch() {
   if (!fetch) {
     const fetchModule = await import('node-fetch');
     fetch = fetchModule.default;
   }
+}
+
+/**
+ * 处理飞书多维表格字段数据
+ * @param {Object} fields - 飞书API返回的字段数据
+ * @returns {Object} 标准化的用户数据
+ */
+function processFeishuFields(fields) {
+  // 提取邮箱信息
+  const email = fields.email?.[0]?.text || fields.email?.[0]?.link || '';
+  
+  // 提取密码哈希，支持多种格式
+  const passwordHash = fields.password_hash?.[0]?.text || 
+                      (typeof fields.password_hash === 'string' ? fields.password_hash : null);
+  
+  return {
+    email,
+    passwordHash,
+    createdAt: fields.created_at,
+    updatedAt: fields.updated_at,
+  };
+}
+
+/**
+ * 获取 tenant_access_token
+ */
+export async function getTenantAccessToken() {
+  await ensureFetch();
 
   // 检查缓存是否有效
   if (cachedToken && Date.now() < tokenExpireTime) {
@@ -63,15 +90,12 @@ export async function getTenantAccessToken() {
 
 /**
  * 在多维表格中根据邮箱查询用户
+ * @param {string} email - 用户邮箱
+ * @returns {Object|null} 用户信息或null
  */
 export async function findUserByEmail(email) {
   try {
-    // 确保fetch已加载
-    if (!fetch) {
-      const fetchModule = await import('node-fetch');
-      fetch = fetchModule.default;
-    }
-
+    await ensureFetch();
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -98,14 +122,11 @@ export async function findUserByEmail(email) {
 
     // 处理飞书多维表格的字段格式
     const item = data.data.items[0];
-    const fields = item.fields;
+    const processedFields = processFeishuFields(item.fields);
     
     return {
       userId: item.record_id,
-      email: fields.email?.[0]?.text || fields.email?.[0]?.link || '',
-      passwordHash: fields.password_hash?.[0]?.text || null,
-      createdAt: fields.created_at,
-      updatedAt: fields.updated_at,
+      ...processedFields,
     };
   } catch (error) {
     console.error('查询用户错误:', error);
@@ -115,15 +136,14 @@ export async function findUserByEmail(email) {
 
 /**
  * 在多维表格中创建用户
+ * @param {Object} params - 用户参数
+ * @param {string} params.email - 用户邮箱
+ * @param {string} params.passwordHash - 密码哈希
+ * @returns {Object} 创建结果
  */
 export async function createUser({ email, passwordHash }) {
   try {
-    // 确保fetch已加载
-    if (!fetch) {
-      const fetchModule = await import('node-fetch');
-      fetch = fetchModule.default;
-    }
-
+    await ensureFetch();
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -160,15 +180,12 @@ export async function createUser({ email, passwordHash }) {
 
 /**
  * 根据会话中的 userId 查询用户资料
+ * @param {string} userId - 用户ID
+ * @returns {Object|null} 用户信息或null
  */
 export async function getUserById(userId) {
   try {
-    // 确保fetch已加载
-    if (!fetch) {
-      const fetchModule = await import('node-fetch');
-      fetch = fetchModule.default;
-    }
-
+    await ensureFetch();
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -190,14 +207,11 @@ export async function getUserById(userId) {
     }
 
     // 处理飞书多维表格的字段格式
-    const fields = data.data.fields;
+    const processedFields = processFeishuFields(data.data.fields);
     
     return {
       userId: data.data.record_id,
-      email: fields.email?.[0]?.text || fields.email?.[0]?.link || '',
-      passwordHash: fields.password_hash?.[0]?.text || null,
-      createdAt: fields.created_at,
-      updatedAt: fields.updated_at,
+      ...processedFields,
     };
   } catch (error) {
     console.error('获取用户错误:', error);
@@ -207,15 +221,12 @@ export async function getUserById(userId) {
 
 /**
  * 获取用户密码哈希
+ * @param {string} userId - 用户ID
+ * @returns {string|null} 密码哈希或null
  */
 export async function getUserPasswordHash(userId) {
   try {
-    // 确保fetch已加载
-    if (!fetch) {
-      const fetchModule = await import('node-fetch');
-      fetch = fetchModule.default;
-    }
-
+    await ensureFetch();
     const token = await getTenantAccessToken();
     
     const response = await fetch(
@@ -237,8 +248,8 @@ export async function getUserPasswordHash(userId) {
     }
 
     // 处理飞书多维表格的字段格式
-    const fields = data.data.fields;
-    return fields.password_hash?.[0]?.text || null;
+    const processedFields = processFeishuFields(data.data.fields);
+    return processedFields.passwordHash;
   } catch (error) {
     console.error('获取用户密码哈希错误:', error);
     return null;
@@ -247,9 +258,23 @@ export async function getUserPasswordHash(userId) {
 
 /**
  * 校验密码
+ * @param {string} plain - 明文密码
+ * @param {string} passwordHash - 密码哈希
+ * @returns {boolean} 验证结果
  */
 export async function verifyPassword(plain, passwordHash) {
   try {
+    // 类型检查
+    if (!plain || typeof plain !== 'string') {
+      console.error('密码验证错误: plain password 不是字符串', { type: typeof plain });
+      return false;
+    }
+    
+    if (!passwordHash || typeof passwordHash !== 'string') {
+      console.error('密码验证错误: passwordHash 不是字符串', { type: typeof passwordHash });
+      return false;
+    }
+    
     return await bcrypt.compare(plain, passwordHash);
   } catch (error) {
     console.error('密码验证错误:', error);
@@ -259,6 +284,8 @@ export async function verifyPassword(plain, passwordHash) {
 
 /**
  * 生成密码哈希
+ * @param {string} plain - 明文密码
+ * @returns {string} 密码哈希
  */
 export async function hashPassword(plain) {
   try {
