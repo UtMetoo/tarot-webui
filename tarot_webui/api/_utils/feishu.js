@@ -18,6 +18,27 @@ let cachedToken = null;
 let tokenExpireTime = 0;
 
 /**
+ * 解析飞书字段值的辅助函数
+ * @param {any} field - 飞书字段值
+ * @returns {any} 解析后的字段值
+ */
+function parseFeishuField(field) {
+  if (!field) return null;
+  
+  // 如果是数组结构（如 email 字段）
+  if (field['0'] && field['0'].text) {
+    return field['0'].text;
+  }
+  
+  // 如果是简单值（如时间戳）
+  if (typeof field === 'number' || typeof field === 'string') {
+    return field;
+  }
+  
+  return null;
+}
+
+/**
  * 获取 tenant_access_token
  */
 export async function getTenantAccessToken() {
@@ -92,6 +113,7 @@ export async function findUserByEmail(email) {
       return null;
     }
 
+    // 返回原始结构，保持与登录API的兼容性
     return data.data.items.length > 0 ? data.data.items[0] : null;
   } catch (error) {
     console.error('查询用户错误:', error);
@@ -175,11 +197,20 @@ export async function getUserById(userId) {
       return null;
     }
 
+    // 检查 fields 是否存在
+    if (!data.data?.fields) {
+      console.error('getUserById - fields 不存在:', data);
+      return null;
+    }
+
+    // 解析飞书字段值
+    const fields = data.data.fields;
+    
     return {
       userId: data.data.record_id,
-      email: data.data.fields.email?.[0]?.text,
-      createdAt: data.data.fields.created_at,
-      updatedAt: data.data.fields.updated_at,
+      email: parseFeishuField(fields.email),
+      createdAt: parseFeishuField(fields.created_at),
+      updatedAt: parseFeishuField(fields.updated_at),
     };
   } catch (error) {
     console.error('获取用户错误:', error);
