@@ -30,14 +30,15 @@ export default async function handler(req, res) {
 		}
 
 		// 验证密码
-		const isValidPassword = await verifyPassword(password, userRecord.passwordHash);
+		const passwordHash = userRecord.fields.password_hash;
+		const isValidPassword = await verifyPassword(password, passwordHash);
 
 		if (!isValidPassword) {
 			return json(res, 401, { error: '邮箱或密码错误' });
 		}
 
 		// 生成JWT令牌
-		const userId = userRecord.userId;
+		const userId = userRecord.record_id;
 		const token = generateToken({ userId, email });
 
 		// 设置Cookie
