@@ -41,6 +41,9 @@
 - 链接和代码块测试
 - 复杂格式组合测试
 - 实时渲染预览
+- **新增**: 基于marked库的增强渲染功能
+
+**技术栈**: 使用marked库进行Markdown解析，支持GitHub风格Markdown
 
 **访问方式**: `https://your-domain.vercel.app/test/markdown-test`
 
