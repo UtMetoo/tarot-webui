@@ -289,6 +289,44 @@ timeline
             <button class="test-button" onclick="testMarkdown('test4')">渲染测试4</button>
         </div>
         
+        <div class="test-section">
+            <div class="test-title">测试5：有序列表修复验证（原始问题）</div>
+            <div class="raw-markdown" id="test5-raw">### 🔮 塔罗牌解读
+
+1. **逆位宝剑骑士**
+   逆位的宝剑骑士通常表示冲动和缺乏耐心。在婚姻的背景下，这张牌提醒你，未来的婚姻生活中可能会有一些沟通上的挑战。你需要更加冷静和理性地处理问题，避免让情绪主导你的行为。
+
+2. **正位权杖三**
+   正位的权杖三象征着展望和计划。这张牌暗示你在婚姻的准备过程中，需要更多的规划和远见。它鼓励你与伴侣共同制定未来的计划，并确保你们的目标一致。这张牌是一个积极的信号，表明你们的婚姻有坚实的基础。
+
+3. **逆位魔术师**
+   逆位的魔术师可能表示缺乏自信或资源不足。在婚姻的背景下，这张牌提醒你，未来的婚姻生活中可能会遇到一些意想不到的挑战。你需要更加灵活和适应性强，找到解决问题的新方法。</div>
+            <div class="rendered-result" id="test5-result"></div>
+            <button class="test-button" onclick="testMarkdown('test5')">渲染测试5</button>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">测试6：基本有序列表</div>
+            <div class="raw-markdown" id="test6-raw">1. **逆位宝剑骑士**
+2. **正位权杖三**
+3. **逆位魔术师**</div>
+            <div class="rendered-result" id="test6-result"></div>
+            <button class="test-button" onclick="testMarkdown('test6')">渲染测试6</button>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">测试7：混合内容（标题+有序列表+段落）</div>
+            <div class="raw-markdown" id="test7-raw">### 🔮 塔罗牌解读
+
+1. **逆位宝剑骑士**
+2. **正位权杖三**
+3. **逆位魔术师**
+
+这是列表后的段落内容。</div>
+            <div class="rendered-result" id="test7-result"></div>
+            <button class="test-button" onclick="testMarkdown('test7')">渲染测试7</button>
+        </div>
+        
         <button class="test-button" onclick="testAllMarkdown()">渲染所有测试</button>
     </div>
 
@@ -329,6 +367,9 @@ timeline
             testMarkdown('test2');
             testMarkdown('test3');
             testMarkdown('test4');
+            testMarkdown('test5');
+            testMarkdown('test6');
+            testMarkdown('test7');
         }
         
         // 页面加载时自动渲染所有测试

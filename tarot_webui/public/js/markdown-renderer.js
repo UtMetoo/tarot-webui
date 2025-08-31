@@ -39,6 +39,9 @@ class MarkdownRenderer {
         // 处理链接 [text](url)
         html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
+        // 处理换行符（在列表处理之前），但排除列表项和Mermaid代码块
+        html = this.processLineBreaks(html);
+
         // 处理无序列表
         html = this.processUnorderedLists(html);
 
@@ -47,9 +50,6 @@ class MarkdownRenderer {
 
         // 处理段落
         html = this.processParagraphs(html);
-
-        // 处理换行符（在段落处理之后），但排除Mermaid代码块
-        html = this.processLineBreaks(html);
 
         // 清理多余的br标签
         html = this.cleanupBreakTags(html);
@@ -68,7 +68,7 @@ class MarkdownRenderer {
     }
 
     /**
-     * 处理换行符，但排除Mermaid代码块
+     * 处理换行符，但排除Mermaid代码块和列表项
      */
     static processLineBreaks(html) {
         // 使用正则表达式匹配Mermaid代码块，并临时替换为占位符
@@ -81,9 +81,26 @@ class MarkdownRenderer {
             blockIndex++;
             return placeholder;
         });
+
+        // 临时标记列表项，避免在列表项之间添加<br>
+        const lines = html.split('\n');
+        let processedLines = [];
         
-        // 处理换行符
-        html = html.replace(/\n/g, '<br>');
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const isOrderedItem = /^\d+\. (.*)$/.test(line);
+            const isUnorderedItem = /^- (.*)$/.test(line);
+            
+            if (isOrderedItem || isUnorderedItem) {
+                // 列表项不添加<br>，保持原样
+                processedLines.push(line);
+            } else {
+                // 非列表项，将换行符替换为<br>
+                processedLines.push(line.replace(/\n/g, '<br>'));
+            }
+        }
+        
+        html = processedLines.join('\n');
         
         // 恢复Mermaid代码块
         mermaidBlocks.forEach((block, index) => {
@@ -97,12 +114,13 @@ class MarkdownRenderer {
      * 处理无序列表 - item
      */
     static processUnorderedLists(html) {
-        const lines = html.split('\n');
+        // 先按<br>分割，然后按\n分割，确保能处理所有情况
+        const lines = html.split(/<br>\s*\n|\n|<br>/);
         let inList = false;
         let processedLines = [];
         
         for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
+            const line = lines[i].trim();
             const isListItem = /^- (.*)$/.test(line);
             
             if (isListItem && !inList) {
@@ -116,11 +134,15 @@ class MarkdownRenderer {
             } else if (!isListItem && inList) {
                 // 结束列表
                 processedLines.push('</ul>');
-                processedLines.push(line);
+                if (line) {
+                    processedLines.push(line);
+                }
                 inList = false;
             } else {
                 // 普通行
-                processedLines.push(line);
+                if (line) {
+                    processedLines.push(line);
+                }
             }
         }
         
@@ -136,12 +158,13 @@ class MarkdownRenderer {
      * 处理有序列表 1. item
      */
     static processOrderedLists(html) {
-        const numberedLines = html.split('\n');
+        // 先按<br>分割，然后按\n分割，确保能处理所有情况
+        const lines = html.split(/<br>\s*\n|\n|<br>/);
         let inOrderedList = false;
         let orderedProcessedLines = [];
         
-        for (let i = 0; i < numberedLines.length; i++) {
-            const line = numberedLines[i];
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
             const isOrderedItem = /^\d+\. (.*)$/.test(line);
             
             if (isOrderedItem && !inOrderedList) {
@@ -155,11 +178,15 @@ class MarkdownRenderer {
             } else if (!isOrderedItem && inOrderedList) {
                 // 结束有序列表
                 orderedProcessedLines.push('</ol>');
-                orderedProcessedLines.push(line);
+                if (line) {
+                    orderedProcessedLines.push(line);
+                }
                 inOrderedList = false;
             } else {
                 // 普通行
-                orderedProcessedLines.push(line);
+                if (line) {
+                    orderedProcessedLines.push(line);
+                }
             }
         }
         
